@@ -16,12 +16,12 @@ export function useAuthForm() {
     agency_name: '',
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError('');
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -43,7 +43,7 @@ export function useAuthForm() {
         });
       }
       login(res.data.token, res.data.user);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.response?.data?.detail || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);

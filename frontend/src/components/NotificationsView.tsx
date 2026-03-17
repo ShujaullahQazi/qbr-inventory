@@ -1,7 +1,7 @@
 import React from 'react';
 import { timeAgo } from './ListingCard';
 
-export default function NotificationsView({ notifications, handleMarkRead, setActiveTab }) {
+export default function NotificationsView({ notifications, handleMarkRead, setActiveTab }: { notifications: any[]; handleMarkRead: (id: string) => void; setActiveTab: (tab: string) => void }) {
   if (notifications.length === 0) {
     return (
       <div className="empty-state">

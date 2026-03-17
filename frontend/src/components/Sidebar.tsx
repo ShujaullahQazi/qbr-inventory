@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Sidebar({ activeTab, setActiveTab, myListingsCount, matchesCount, unreadCount, user, logout }) {
+export default function Sidebar({ activeTab, setActiveTab, myListingsCount, matchesCount, unreadCount, user, logout }: { activeTab: string; setActiveTab: (tab: string) => void; myListingsCount: number; matchesCount: number; unreadCount: number; user: any; logout: () => void }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">

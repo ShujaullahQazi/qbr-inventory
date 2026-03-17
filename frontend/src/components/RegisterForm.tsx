@@ -1,7 +1,7 @@
 import React from 'react';
 import { SECTORS } from '../utils/constants';
 
-export default function RegisterForm({ form, handleChange, handleSubmit, loading }) {
+export default function RegisterForm({ form, handleChange, handleSubmit, loading }: { form: any; handleChange: (e: any) => void; handleSubmit: (e: React.FormEvent) => void; loading: boolean; }) {
   return (
     <form onSubmit={handleSubmit}>
       <div className="form-group">

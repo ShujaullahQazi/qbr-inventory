@@ -1,13 +1,13 @@
 import { matchesAPI } from '../services/api';
 
-function formatBudget(val) {
+function formatBudget(val: any) {
   if (!val) return '—';
   if (val >= 10000000) return `${(val / 10000000).toFixed(1)} Cr`;
   if (val >= 100000) return `${(val / 100000).toFixed(1)} Lac`;
   return `PKR ${val.toLocaleString()}`;
 }
 
-function timeAgo(dateStr) {
+function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return 'Just now';
@@ -18,8 +18,8 @@ function timeAgo(dateStr) {
   return `${days}d ago`;
 }
 
-export default function MatchCard({ match, onRefresh }) {
-  const handleStatus = async (matchId, status) => {
+export default function MatchCard({ match, onRefresh }: { match: any; onRefresh?: () => void }) {
+  const handleStatus = async (matchId: string, status: string) => {
     try {
       await matchesAPI.updateStatus(matchId, status);
       if (onRefresh) onRefresh();

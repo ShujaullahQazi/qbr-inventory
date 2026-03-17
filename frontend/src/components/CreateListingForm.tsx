@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { listingsAPI } from '../services/api';
 import { PROPERTY_TYPES, PROPERTY_SIZES, SECTORS } from '../utils/constants';
 
-export default function CreateListingForm({ onClose, onCreated }) {
+export default function CreateListingForm({ onClose, onCreated }: { onClose?: () => void; onCreated?: (data: any) => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [form, setForm] = useState({
@@ -15,12 +15,12 @@ export default function CreateListingForm({ onClose, onCreated }) {
     contact_note: '',
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError('');
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -35,7 +35,7 @@ export default function CreateListingForm({ onClose, onCreated }) {
       const res = await listingsAPI.create(payload);
       if (onCreated) onCreated(res.data);
       if (onClose) onClose();
-    } catch (err) {
+    } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to create listing');
     } finally {
       setLoading(false);

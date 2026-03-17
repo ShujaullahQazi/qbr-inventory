@@ -2,17 +2,17 @@ import { useState, useCallback, useEffect } from 'react';
 import { listingsAPI, matchesAPI, notificationsAPI } from '../services/api';
 
 export function useDashboardData() {
-  const [listings, setListings] = useState([]);
-  const [myListings, setMyListings] = useState([]);
-  const [matches, setMatches] = useState([]);
-  const [notifications, setNotifications] = useState([]);
+  const [listings, setListings] = useState<any[]>([]);
+  const [myListings, setMyListings] = useState<any[]>([]);
+  const [matches, setMatches] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
   const [loading, setLoading] = useState(false);
-  const [searchParams, setSearchParams] = useState({});
+  const [searchParams, setSearchParams] = useState<any>({});
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
-  const fetchListings = useCallback(async (params = {}) => {
+  const fetchListings = useCallback(async (params: any = {}) => {
     setLoading(true);
     try {
       const res = await listingsAPI.getAll({ ...params, page: params.page || 1 });
@@ -64,16 +64,16 @@ export function useDashboardData() {
     return () => clearInterval(interval);
   }, [fetchNotifications]);
 
-  const handleSearch = (params) => {
+  const handleSearch = (params: any) => {
     setSearchParams(params);
     fetchListings(params);
   };
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage: number) => {
     fetchListings({ ...searchParams, page: newPage });
   };
 
-  const handleListingCreated = (data) => {
+  const handleListingCreated = (data: any) => {
     fetchListings(searchParams);
     fetchMyListings();
     if (data.matches_found > 0) {
@@ -82,7 +82,7 @@ export function useDashboardData() {
     }
   };
 
-  const handleDeleteListing = async (id) => {
+  const handleDeleteListing = async (id: string) => {
     if (!window.confirm('Delete this listing?')) return;
     try {
       await listingsAPI.delete(id);
@@ -102,7 +102,7 @@ export function useDashboardData() {
     }
   };
 
-  const handleMarkRead = async (id) => {
+  const handleMarkRead = async (id: string) => {
     try {
       await notificationsAPI.markRead(id);
       fetchNotifications();

@@ -1,10 +1,27 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI } from '../services/api';
 
-const AuthContext = createContext(null);
+interface User {
+  id: string;
+  name: string;
+  phone: string;
+  sector?: string;
+  agency_name?: string;
+}
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+interface AuthContextType {
+  user: User | null;
+  token: string | null;
+  loading: boolean;
+  login: (tokenValue: string, userData: User) => void;
+  logout: () => void;
+  isAuthenticated: boolean;
+}
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
@@ -24,7 +41,7 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
-  const login = (tokenValue, userData) => {
+  const login = (tokenValue: string, userData: User) => {
     localStorage.setItem('token', tokenValue);
     localStorage.setItem('user', JSON.stringify(userData));
     setToken(tokenValue);

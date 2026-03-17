@@ -6,7 +6,7 @@ export default function ListingsFeedView({
   listings, 
   pagination, 
   handlePageChange 
-}) {
+}: { loading: boolean; listings: any[]; pagination: any; handlePageChange: (page: number) => void }) {
   if (loading) return <div className="spinner" />;
   
   if (listings.length === 0) {

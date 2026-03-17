@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function SearchFilter({ onSearch, loading }) {
+export default function SearchFilter({ onSearch, loading }: { onSearch: (params: any) => void; loading: boolean; }) {
   const [filters, setFilters] = useState({
     type: '',
     property_type: '',
@@ -10,14 +10,14 @@ export default function SearchFilter({ onSearch, loading }) {
     budget_max: '',
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const updated = { ...filters, [e.target.name]: e.target.value };
     setFilters(updated);
   };
 
   const handleSearch = () => {
     // Clean up empty values
-    const params = {};
+    const params: Record<string, string> = {};
     Object.entries(filters).forEach(([key, value]) => {
       if (value) params[key] = value;
     });

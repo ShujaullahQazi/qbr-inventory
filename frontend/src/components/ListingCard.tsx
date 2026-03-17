@@ -1,13 +1,13 @@
 import React from 'react';
 
-function formatBudget(val) {
+function formatBudget(val: any) {
   if (!val) return '—';
   if (val >= 10000000) return `${(val / 10000000).toFixed(1)} Cr`;
   if (val >= 100000) return `${(val / 100000).toFixed(1)} Lac`;
   return `PKR ${val.toLocaleString()}`;
 }
 
-export function timeAgo(dateStr) {
+export function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return 'Just now';
@@ -18,7 +18,7 @@ export function timeAgo(dateStr) {
   return `${days}d ago`;
 }
 
-export default function ListingCard({ listing, isMyListing, onDelete }) {
+export default function ListingCard({ listing, isMyListing, onDelete }: { listing: any; isMyListing: boolean; onDelete?: (id: string) => void }) {
   return (
     <div className={`listing-card ${listing.type}`}>
       <div className="listing-header">
@@ -60,7 +60,7 @@ export default function ListingCard({ listing, isMyListing, onDelete }) {
               {listing.status.toUpperCase()}
             </span>
             <div className="listing-actions">
-              <button className="btn btn-danger btn-sm" onClick={() => onDelete(listing._id)}>
+              <button className="btn btn-danger btn-sm" onClick={() => onDelete?.(listing._id)}>
                 🗑 Delete
               </button>
             </div>

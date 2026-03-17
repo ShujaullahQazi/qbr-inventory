@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function LoginForm({ form, handleChange, handleSubmit, loading }) {
+export default function LoginForm({ form, handleChange, handleSubmit, loading }: { form: any; handleChange: (e: any) => void; handleSubmit: (e: React.FormEvent) => void; loading: boolean; }) {
   return (
     <form onSubmit={handleSubmit}>
       <div className="form-group">

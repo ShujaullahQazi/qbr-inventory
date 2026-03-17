@@ -33,30 +33,30 @@ api.interceptors.response.use(
 
 // Auth
 export const authAPI = {
-  register: (data) => api.post('/auth/register', data),
-  login: (data) => api.post('/auth/login', data),
+  register: (data: any) => api.post('/auth/register', data),
+  login: (data: any) => api.post('/auth/login', data),
   getMe: () => api.get('/auth/me'),
 };
 
 // Listings
 export const listingsAPI = {
-  create: (data) => api.post('/listings/', data),
-  getAll: (params) => api.get('/listings/', { params }),
+  create: (data: any) => api.post('/listings/', data),
+  getAll: (params?: any) => api.get('/listings/', { params }),
   getMy: () => api.get('/listings/my'),
-  update: (id, data) => api.put(`/listings/${id}`, data),
-  delete: (id) => api.delete(`/listings/${id}`),
+  update: (id: string, data: any) => api.put(`/listings/${id}`, data),
+  delete: (id: string) => api.delete(`/listings/${id}`),
 };
 
 // Matches
 export const matchesAPI = {
   getAll: () => api.get('/matches/'),
-  updateStatus: (id, status) => api.put(`/matches/${id}/status?status=${status}`),
+  updateStatus: (id: string, status: string) => api.put(`/matches/${id}/status?status=${status}`),
 };
 
 // Notifications
 export const notificationsAPI = {
   getAll: (unreadOnly = false) => api.get('/matches/notifications', { params: { unread_only: unreadOnly } }),
-  markRead: (id) => api.put(`/matches/notifications/${id}/read`),
+  markRead: (id: string) => api.put(`/matches/notifications/${id}/read`),
   markAllRead: () => api.put('/matches/notifications/read-all'),
 };
 
