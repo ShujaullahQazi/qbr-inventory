@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { listingsAPI } from '../services/api';
+import { PROPERTY_TYPES, PROPERTY_SIZES, SECTORS } from '../utils/constants';
 
 export default function CreateListingForm({ onClose, onCreated }) {
   const [loading, setLoading] = useState(false);
@@ -83,11 +84,11 @@ export default function CreateListingForm({ onClose, onCreated }) {
               onChange={handleChange}
               required
             >
-              <option value="plot">Plot</option>
-              <option value="shop">Market Shop</option>
-              <option value="house">House</option>
-              <option value="flat">Flat / Apartment</option>
-              <option value="commercial">Commercial</option>
+              {PROPERTY_TYPES.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -103,14 +104,11 @@ export default function CreateListingForm({ onClose, onCreated }) {
                 required
               >
                 <option value="">Select Size</option>
-                <option value="3 Marla">3 Marla</option>
-                <option value="5 Marla">5 Marla</option>
-                <option value="7 Marla">7 Marla</option>
-                <option value="10 Marla">10 Marla</option>
-                <option value="1 Kanal">1 Kanal</option>
-                <option value="2 Kanal">2 Kanal</option>
-                <option value="4 Kanal">4 Kanal</option>
-                <option value="8 Kanal">8 Kanal</option>
+                {PROPERTY_SIZES.map((size) => (
+                  <option key={size.value} value={size.value}>
+                    {size.label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -125,25 +123,11 @@ export default function CreateListingForm({ onClose, onCreated }) {
                 required
               >
                 <option value="">Select Location</option>
-                <option value="G-13">G-13</option>
-                <option value="G-13/1">G-13/1</option>
-                <option value="G-13/2">G-13/2</option>
-                <option value="G-13/3">G-13/3</option>
-                <option value="G-13/4">G-13/4</option>
-                <option value="G-14">G-14</option>
-                <option value="G-14/1">G-14/1</option>
-                <option value="G-14/2">G-14/2</option>
-                <option value="G-14/3">G-14/3</option>
-                <option value="G-14/4">G-14/4</option>
-                <option value="G-15">G-15</option>
-                <option value="G-16">G-16</option>
-                <option value="I-14">I-14</option>
-                <option value="I-15">I-15</option>
-                <option value="I-16">I-16</option>
-                <option value="D-12">D-12</option>
-                <option value="E-11">E-11</option>
-                <option value="F-17">F-17</option>
-                <option value="B-17">B-17</option>
+                {SECTORS.map((sector) => (
+                  <option key={sector.value} value={sector.value}>
+                    {sector.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
