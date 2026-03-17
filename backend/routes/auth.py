@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Request
+from typing import Dict, Any
 from datetime import datetime, timezone
 from bson import ObjectId
 from database import users_collection
@@ -9,7 +10,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(user: UserCreate):
+async def register(user: UserCreate) -> Dict[str, Any]:
     existing = await users_collection.find_one({"phone": user.phone})
     if existing:
         raise HTTPException(status_code=400, detail="Phone number already registered")
@@ -43,7 +44,7 @@ async def register(user: UserCreate):
 
 
 @router.post("/login")
-async def login(credentials: UserLogin):
+async def login(credentials: UserLogin) -> Dict[str, Any]:
     user = await users_collection.find_one({"phone": credentials.phone})
     if not user or not verify_password(credentials.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid phone number or password")
@@ -66,7 +67,7 @@ async def login(credentials: UserLogin):
 
 
 @router.get("/me")
-async def get_me(request: Request):
+async def get_me(request: Request) -> Dict[str, Any]:
     user_id = getattr(request.state, "user_id", "")
     if not user_id or not ObjectId.is_valid(user_id):
         raise HTTPException(status_code=401, detail="Not authenticated")

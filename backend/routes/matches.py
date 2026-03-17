@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query, Request
+from typing import Dict, Any, Optional
 from bson import ObjectId
 from database import matches_collection, listings_collection, users_collection, notifications_collection
 
@@ -12,8 +13,10 @@ def _get_user_id(request: Request) -> str:
     return user_id
 
 
+from utils.serializers import serialize_listing, serialize_dealer
+
 @router.get("/")
-async def get_my_matches(request: Request):
+async def get_my_matches(request: Request) -> Dict[str, Any]:
     user_id = _get_user_id(request)
     matches = await matches_collection.find({
         "$or": [{"need_user_id": user_id}, {"available_user_id": user_id}]
@@ -32,34 +35,12 @@ async def get_my_matches(request: Request):
         if ObjectId.is_valid(match.get("available_user_id", "")):
             avail_dealer = await users_collection.find_one({"_id": ObjectId(match["available_user_id"])})
 
-        def listing_dict(lst):
-            if not lst:
-                return None
-            return {
-                "_id": str(lst["_id"]),
-                "property_type": lst["property_type"],
-                "size": lst["size"],
-                "location": lst["location"],
-                "budget": lst.get("budget"),
-                "description": lst.get("description"),
-            }
-
-        def dealer_dict(d):
-            if not d:
-                return None
-            return {
-                "name": d["name"],
-                "phone": d["phone"],
-                "sector": d.get("sector", ""),
-                "agency_name": d.get("agency_name"),
-            }
-
         enriched.append({
             "_id": str(match["_id"]),
-            "need_listing": listing_dict(need_listing),
-            "available_listing": listing_dict(avail_listing),
-            "need_dealer": dealer_dict(need_dealer),
-            "available_dealer": dealer_dict(avail_dealer),
+            "need_listing": serialize_listing(need_listing),
+            "available_listing": serialize_listing(avail_listing),
+            "need_dealer": serialize_dealer(need_dealer),
+            "available_dealer": serialize_dealer(avail_dealer),
             "status": match["status"],
             "created_at": match["created_at"].isoformat(),
         })
@@ -68,7 +49,7 @@ async def get_my_matches(request: Request):
 
 
 @router.put("/{match_id}/status")
-async def update_match_status(match_id: str, request: Request, status: str = Query(...)):
+async def update_match_status(match_id: str, request: Request, status: str = Query(...)) -> Dict[str, str]:
     user_id = _get_user_id(request)
     if not ObjectId.is_valid(match_id):
         raise HTTPException(status_code=400, detail="Invalid match ID")
@@ -90,7 +71,7 @@ async def update_match_status(match_id: str, request: Request, status: str = Que
 # --- Notifications ---
 
 @router.get("/notifications")
-async def get_notifications(request: Request, unread_only: bool = Query(False)):
+async def get_notifications(request: Request, unread_only: bool = Query(False)) -> Dict[str, Any]:
     user_id = _get_user_id(request)
     query = {"user_id": user_id}
     if unread_only:
@@ -111,7 +92,7 @@ async def get_notifications(request: Request, unread_only: bool = Query(False)):
 
 
 @router.put("/notifications/{notification_id}/read")
-async def mark_notification_read(notification_id: str, request: Request):
+async def mark_notification_read(notification_id: str, request: Request) -> Dict[str, str]:
     user_id = _get_user_id(request)
     if not ObjectId.is_valid(notification_id):
         raise HTTPException(status_code=400, detail="Invalid notification ID")
@@ -127,7 +108,7 @@ async def mark_notification_read(notification_id: str, request: Request):
 
 
 @router.put("/notifications/read-all")
-async def mark_all_notifications_read(request: Request):
+async def mark_all_notifications_read(request: Request) -> Dict[str, str]:
     user_id = _get_user_id(request)
     await notifications_collection.update_many({"user_id": user_id, "is_read": False}, {"$set": {"is_read": True}})
     return {"message": "All notifications marked as read"}

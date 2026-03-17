@@ -1,5 +1,10 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+import logging
+from jose import JWTError
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="QBR Inventory - Property Dealer Network",
@@ -32,7 +37,11 @@ async def inject_user_id(request: Request, call_next):
                 token = auth_header.split(" ")[1]
                 payload = decode_access_token(token)
                 request.state.user_id = payload.get("sub", "")
-            except Exception:
+            except JWTError as e:
+                logger.warning(f"Invalid JWT Token: {str(e)}")
+                request.state.user_id = ""
+            except Exception as e:
+                logger.error(f"Unexpected error decoding token: {str(e)}")
                 request.state.user_id = ""
         else:
             request.state.user_id = ""
@@ -54,5 +63,5 @@ app.include_router(matches_router)
 
 
 @app.get("/", tags=["Health"])
-async def health_check():
+async def health_check() -> dict:
     return {"status": "ok", "app": "QBR Inventory - Property Dealer Network"}

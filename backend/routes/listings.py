@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Query, Request
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, Dict, Any
 from bson import ObjectId
 from database import listings_collection, users_collection
 from models import ListingCreate, ListingUpdate
@@ -17,7 +17,7 @@ def _get_user_id(request: Request) -> str:
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_listing(listing: ListingCreate, request: Request):
+async def create_listing(listing: ListingCreate, request: Request) -> Dict[str, Any]:
     user_id = _get_user_id(request)
 
     listing_doc = {
@@ -61,7 +61,7 @@ async def get_listings(
     status: Optional[str] = Query("active"),
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
-):
+) -> Dict[str, Any]:
     """Search and filter listings with pagination."""
     query = {}
     if type:
@@ -118,7 +118,7 @@ async def get_listings(
 
 
 @router.get("/my")
-async def get_my_listings(request: Request):
+async def get_my_listings(request: Request) -> Dict[str, Any]:
     user_id = _get_user_id(request)
     listings = await listings_collection.find({"user_id": user_id}).sort("created_at", -1).to_list(100)
     result = []
@@ -140,7 +140,7 @@ async def get_my_listings(request: Request):
 
 
 @router.put("/{listing_id}")
-async def update_listing(listing_id: str, update: ListingUpdate, request: Request):
+async def update_listing(listing_id: str, update: ListingUpdate, request: Request) -> Dict[str, str]:
     user_id = _get_user_id(request)
     if not ObjectId.is_valid(listing_id):
         raise HTTPException(status_code=400, detail="Invalid listing ID")
@@ -160,7 +160,7 @@ async def update_listing(listing_id: str, update: ListingUpdate, request: Reques
 
 
 @router.delete("/{listing_id}")
-async def delete_listing(listing_id: str, request: Request):
+async def delete_listing(listing_id: str, request: Request) -> Dict[str, str]:
     user_id = _get_user_id(request)
     if not ObjectId.is_valid(listing_id):
         raise HTTPException(status_code=400, detail="Invalid listing ID")
