@@ -1,6 +1,19 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 export default function Sidebar({ activeTab, setActiveTab, myListingsCount, matchesCount, unreadCount, user, logout }: { activeTab: string; setActiveTab: (tab: string) => void; myListingsCount: number; matchesCount: number; unreadCount: number; user: any; logout: () => void }) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
@@ -29,7 +42,7 @@ export default function Sidebar({ activeTab, setActiveTab, myListingsCount, matc
         </button>
       </nav>
 
-      <div className="sidebar-user">
+      <div className="sidebar-user" ref={dropdownRef} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
         <div className="sidebar-user-avatar">
           {user?.name?.charAt(0)?.toUpperCase() || '?'}
         </div>
@@ -37,7 +50,27 @@ export default function Sidebar({ activeTab, setActiveTab, myListingsCount, matc
           <div className="name">{user?.name || 'Dealer'}</div>
           <div className="sector">{user?.sector || ''}</div>
         </div>
-        <button className="sidebar-logout" onClick={logout} title="Logout">⏻</button>
+        <div className="sidebar-user-caret">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+
+        {isDropdownOpen && (
+          <div className="profile-dropdown">
+            <div className="profile-dropdown-header mobile-only">
+              <div className="name">{user?.name || 'Dealer'}</div>
+              <div className="sector">{user?.sector || ''}</div>
+            </div>
+            <button className="profile-dropdown-item" onClick={(e) => { e.stopPropagation(); /* Future Profile Target */ }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              Profile Settings
+            </button>
+            <div className="profile-dropdown-divider"></div>
+            <button className="profile-dropdown-item danger" onClick={(e) => { e.stopPropagation(); logout(); }} title="Logout">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+              <span className="logout-text">Logout</span>
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   );
