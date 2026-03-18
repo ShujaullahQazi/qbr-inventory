@@ -23,6 +23,19 @@ export function useAuthForm() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
+    // Client-side pre-validation
+    const cleanPhone = form.phone.replace(/\s+/g, '');
+    const phoneRegex = /^\+?[0-9]{10,15}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      setError('Please enter a valid phone number (10-15 digits).');
+      return;
+    }
+    if (form.password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -30,21 +43,27 @@ export function useAuthForm() {
       let res;
       if (mode === 'register') {
         res = await authAPI.register({
-          name: form.name,
-          phone: form.phone,
+          name: form.name.trim(),
+          phone: cleanPhone,
           password: form.password,
           sector: form.sector,
-          agency_name: form.agency_name || null,
+          agency_name: form.agency_name?.trim() || null,
         });
       } else {
         res = await authAPI.login({
-          phone: form.phone,
+          phone: cleanPhone,
           password: form.password,
         });
       }
       login(res.data.token, res.data.user);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Something went wrong. Please try again.');
+      if (err.response?.status === 422 && Array.isArray(err.response.data.detail)) {
+        // Handle Pydantic validation errors nicely
+        const msg = err.response.data.detail[0]?.msg;
+        setError(`Validation error: ${msg}`);
+      } else {
+        setError(err.response?.data?.detail || 'Something went wrong. Please check your connection and try again.');
+      }
     } finally {
       setLoading(false);
     }

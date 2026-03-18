@@ -13,7 +13,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 async def register(user: UserCreate) -> Dict[str, Any]:
     existing = await users_collection.find_one({"phone": user.phone})
     if existing:
-        raise HTTPException(status_code=400, detail="Phone number already registered")
+        raise HTTPException(status_code=409, detail="Phone number already registered")
 
     user_doc = {
         "name": user.name,
