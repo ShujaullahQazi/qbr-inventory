@@ -1,7 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { timeAgo } from './ListingCard';
 
-export default function NotificationsView({ notifications, handleMarkRead, setActiveTab }: { notifications: any[]; handleMarkRead: (id: string) => void; setActiveTab: (tab: string) => void }) {
+export default function NotificationsView({ notifications, handleMarkRead }: { notifications: any[]; handleMarkRead: (id: string) => void }) {
+  const navigate = useNavigate();
+
   if (notifications.length === 0) {
     return (
       <div className="empty-state">
@@ -20,7 +23,7 @@ export default function NotificationsView({ notifications, handleMarkRead, setAc
           className={`notification-item ${n.is_read ? '' : 'unread'}`}
           onClick={() => {
             if (!n.is_read) handleMarkRead(n._id);
-            setActiveTab('matches');
+            navigate('/matches');
           }}
           style={{ cursor: 'pointer' }}
         >

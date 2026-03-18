@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 
-export default function Sidebar({ activeTab, setActiveTab, myListingsCount, matchesCount, unreadCount, user, logout }: { activeTab: string; setActiveTab: (tab: string) => void; myListingsCount: number; matchesCount: number; unreadCount: number; user: any; logout: () => void }) {
+export default function Sidebar({ myListingsCount, matchesCount, unreadCount, user, logout }: { myListingsCount: number; matchesCount: number; unreadCount: number; user: any; logout: () => void }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -25,21 +26,21 @@ export default function Sidebar({ activeTab, setActiveTab, myListingsCount, matc
       </div>
 
       <nav className="sidebar-nav">
-        <button className={`nav-link ${activeTab === 'feed' ? 'active' : ''}`} onClick={() => setActiveTab('feed')}>
+        <NavLink to="/feed"          className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
           <span className="nav-icon">📋</span> All Listings
-        </button>
-        <button className={`nav-link ${activeTab === 'my' ? 'active' : ''}`} onClick={() => setActiveTab('my')}>
+        </NavLink>
+        <NavLink to="/my"            className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
           <span className="nav-icon">📌</span> My Posts
           {myListingsCount > 0 && <span className="nav-badge" style={{ background: 'var(--info)' }}>{myListingsCount}</span>}
-        </button>
-        <button className={`nav-link ${activeTab === 'matches' ? 'active' : ''}`} onClick={() => setActiveTab('matches')}>
+        </NavLink>
+        <NavLink to="/matches"       className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
           <span className="nav-icon">🎯</span> Matches
           {matchesCount > 0 && <span className="nav-badge" style={{ background: 'var(--success)' }}>{matchesCount}</span>}
-        </button>
-        <button className={`nav-link ${activeTab === 'notifications' ? 'active' : ''}`} onClick={() => setActiveTab('notifications')}>
+        </NavLink>
+        <NavLink to="/notifications" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
           <span className="nav-icon">🔔</span> Notifications
           {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
-        </button>
+        </NavLink>
       </nav>
 
       <div className="sidebar-user" ref={dropdownRef} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>

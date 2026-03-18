@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SearchFilter from '../components/SearchFilter';
 import CreateListingForm from '../components/CreateListingForm';
@@ -8,11 +8,17 @@ import ListingsFeedView from '../components/ListingsFeedView';
 import MyListingsView from '../components/MyListingsView';
 import NotificationsView from '../components/NotificationsView';
 import { useDashboardData } from '../hooks/useDashboardData';
+import { useState } from 'react';
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('feed');
+  const location = useLocation();
+  const navigate = useNavigate();
   const [showCreateForm, setShowCreateForm] = useState(false);
+
+  // Derive active tab from URL path (strip leading slash)
+  const activeTab = location.pathname.replace('/', '') || 'feed';
+  const setActiveTab = (tab: string) => navigate(`/${tab}`);
 
   // Use custom hook for data management
   const {
@@ -37,8 +43,6 @@ export default function Dashboard() {
     <div className="app-layout">
       {/* Sidebar */}
       <Sidebar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
         myListingsCount={myListings.length}
         matchesCount={matches.length}
         unreadCount={unreadCount}
@@ -118,7 +122,6 @@ export default function Dashboard() {
             <NotificationsView 
               notifications={notifications}
               handleMarkRead={handleMarkRead}
-              setActiveTab={setActiveTab}
             />
           </>
         )}
