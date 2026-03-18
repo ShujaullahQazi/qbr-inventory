@@ -48,38 +48,6 @@ export default function Dashboard() {
 
       {/* Main */}
       <main className="main-content">
-        {/* Stats */}
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-icon purple">📋</div>
-            <div>
-              <div className="stat-value">{pagination.total}</div>
-              <div className="stat-label">Total Listings</div>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon teal">🎯</div>
-            <div>
-              <div className="stat-value">{matches.length}</div>
-              <div className="stat-label">Your Matches</div>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon orange">📌</div>
-            <div>
-              <div className="stat-value">{myListings.length}</div>
-              <div className="stat-label">My Posts</div>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon blue">🔔</div>
-            <div>
-              <div className="stat-value">{unreadCount}</div>
-              <div className="stat-label">New Alerts</div>
-            </div>
-          </div>
-        </div>
-
         {/* Tab Content */}
         {activeTab === 'feed' && (
           <>
