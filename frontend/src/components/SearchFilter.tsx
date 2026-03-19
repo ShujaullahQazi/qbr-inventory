@@ -1,6 +1,22 @@
 import { useState } from 'react';
+import { useMetadata } from '../context/MetadataContext';
 
-export default function SearchFilter({ onSearch, loading }: { onSearch: (params: any) => void; loading: boolean; }) {
+interface SearchParams {
+  type?: string;
+  property_type?: string;
+  size?: string;
+  location?: string;
+  budget_min?: string;
+  budget_max?: string;
+}
+
+interface SearchFilterProps {
+  onSearch: (params: SearchParams) => void;
+  loading: boolean;
+}
+
+export default function SearchFilter({ onSearch, loading }: SearchFilterProps) {
+  const { propertyTypes, propertySizes, sectors } = useMetadata();
   const [filters, setFilters] = useState({
     type: '',
     property_type: '',
@@ -10,16 +26,16 @@ export default function SearchFilter({ onSearch, loading }: { onSearch: (params:
     budget_max: '',
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const updated = { ...filters, [e.target.name]: e.target.value };
     setFilters(updated);
   };
 
   const handleSearch = () => {
-    // Clean up empty values
-    const params: Record<string, string> = {};
+    // Strip empty values before sending
+    const params: SearchParams = {};
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) params[key] = value;
+      if (value) params[key as keyof SearchParams] = value;
     });
     onSearch(params);
   };
@@ -45,11 +61,9 @@ export default function SearchFilter({ onSearch, loading }: { onSearch: (params:
         <label className="form-label">Property</label>
         <select className="form-select" name="property_type" value={filters.property_type} onChange={handleChange}>
           <option value="">All Types</option>
-          <option value="plot">Plot</option>
-          <option value="shop">Shop</option>
-          <option value="house">House</option>
-          <option value="flat">Flat</option>
-          <option value="commercial">Commercial</option>
+          {propertyTypes.map((t) => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
         </select>
       </div>
 
@@ -57,12 +71,9 @@ export default function SearchFilter({ onSearch, loading }: { onSearch: (params:
         <label className="form-label">Size</label>
         <select className="form-select" name="size" value={filters.size} onChange={handleChange}>
           <option value="">Any Size</option>
-          <option value="3 Marla">3 Marla</option>
-          <option value="5 Marla">5 Marla</option>
-          <option value="7 Marla">7 Marla</option>
-          <option value="10 Marla">10 Marla</option>
-          <option value="1 Kanal">1 Kanal</option>
-          <option value="2 Kanal">2 Kanal</option>
+          {propertySizes.map((s) => (
+            <option key={s.value} value={s.value}>{s.label}</option>
+          ))}
         </select>
       </div>
 
@@ -70,17 +81,9 @@ export default function SearchFilter({ onSearch, loading }: { onSearch: (params:
         <label className="form-label">Sector</label>
         <select className="form-select" name="location" value={filters.location} onChange={handleChange}>
           <option value="">All Sectors</option>
-          <option value="G-13">G-13</option>
-          <option value="G-14">G-14</option>
-          <option value="G-15">G-15</option>
-          <option value="G-16">G-16</option>
-          <option value="I-14">I-14</option>
-          <option value="I-15">I-15</option>
-          <option value="I-16">I-16</option>
-          <option value="D-12">D-12</option>
-          <option value="E-11">E-11</option>
-          <option value="F-17">F-17</option>
-          <option value="B-17">B-17</option>
+          {sectors.map((sec) => (
+            <option key={sec.value} value={sec.value}>{sec.label}</option>
+          ))}
         </select>
       </div>
 
@@ -108,7 +111,7 @@ export default function SearchFilter({ onSearch, loading }: { onSearch: (params:
         />
       </div>
 
-      <div style={{ display: 'flex', gap: '0.5rem', alignSelf: 'flex-end', paddingBottom: '2px' }}>
+      <div className="search-bar-actions">
         <button className="btn btn-primary btn-sm" onClick={handleSearch} disabled={loading}>
           🔍 Search
         </button>

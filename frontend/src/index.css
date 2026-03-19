@@ -1368,6 +1368,13 @@ h5 {
   flex-shrink: 0;
 }
 
+.search-bar-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-self: flex-end;
+  padding-bottom: 2px;
+}
+
 /* ========================
    RESPONSIVE
    ======================== */

@@ -68,6 +68,7 @@ export const adminAPI = {
   getPending: () => api.get('/admin/users/pending'),
   approve: (userId: string) => api.put(`/admin/users/${userId}/approve`),
   reject: (userId: string) => api.delete(`/admin/users/${userId}/reject`),
+  updateMetadata: (data: Record<string, string[]>) => api.put('/metadata', data),
 };
 
 export default api;

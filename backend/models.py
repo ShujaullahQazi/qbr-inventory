@@ -60,7 +60,7 @@ class UserOut(BaseModel):
 # ========================
 class ListingCreate(BaseModel):
     type: Literal["need", "available"]
-    property_type: Literal["plot", "shop", "house", "flat", "commercial"]
+    property_type: str = Field(..., description="Must match a known property type from /metadata")
     size: str = Field(..., description="e.g. 5 Marla, 10 Marla, 1 Kanal")
     location: str = Field(..., description="e.g. G-13, G-14/1")
     budget: Optional[float] = None
@@ -89,7 +89,7 @@ class ListingOut(BaseModel):
 
 class ListingUpdate(BaseModel):
     type: Optional[Literal["need", "available"]] = None
-    property_type: Optional[Literal["plot", "shop", "house", "flat", "commercial"]] = None
+    property_type: Optional[str] = None
     size: Optional[str] = None
     location: Optional[str] = None
     budget: Optional[float] = None

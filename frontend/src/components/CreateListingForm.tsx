@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { listingsAPI } from '../services/api';
-import { PROPERTY_TYPES, PROPERTY_SIZES, SECTORS } from '../utils/constants';
+import { useMetadata } from '../context/MetadataContext';
 
-export default function CreateListingForm({ onClose, onCreated }: { onClose?: () => void; onCreated?: (data: any) => void }) {
+export default function CreateListingForm({ onClose, onCreated }: { onClose?: () => void; onCreated?: (data: unknown) => void }) {
+  const { propertyTypes, propertySizes, sectors } = useMetadata();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [form, setForm] = useState({
     type: 'need',
-    property_type: 'plot',
+    property_type: '',
     size: '',
     location: '',
     budget: '',
@@ -15,7 +16,7 @@ export default function CreateListingForm({ onClose, onCreated }: { onClose?: ()
     contact_note: '',
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError('');
   };
@@ -35,8 +36,9 @@ export default function CreateListingForm({ onClose, onCreated }: { onClose?: ()
       const res = await listingsAPI.create(payload);
       if (onCreated) onCreated(res.data);
       if (onClose) onClose();
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to create listing');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setError(error.response?.data?.detail || 'Failed to create listing');
     } finally {
       setLoading(false);
     }
@@ -84,10 +86,9 @@ export default function CreateListingForm({ onClose, onCreated }: { onClose?: ()
               onChange={handleChange}
               required
             >
-              {PROPERTY_TYPES.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
+              <option value="">Select Type</option>
+              {propertyTypes.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
               ))}
             </select>
           </div>
@@ -104,10 +105,8 @@ export default function CreateListingForm({ onClose, onCreated }: { onClose?: ()
                 required
               >
                 <option value="">Select Size</option>
-                {PROPERTY_SIZES.map((size) => (
-                  <option key={size.value} value={size.value}>
-                    {size.label}
-                  </option>
+                {propertySizes.map((s) => (
+                  <option key={s.value} value={s.value}>{s.label}</option>
                 ))}
               </select>
             </div>
@@ -123,10 +122,8 @@ export default function CreateListingForm({ onClose, onCreated }: { onClose?: ()
                 required
               >
                 <option value="">Select Location</option>
-                {SECTORS.map((sector) => (
-                  <option key={sector.value} value={sector.value}>
-                    {sector.label}
-                  </option>
+                {sectors.map((sec) => (
+                  <option key={sec.value} value={sec.value}>{sec.label}</option>
                 ))}
               </select>
             </div>

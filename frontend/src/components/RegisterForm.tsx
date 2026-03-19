@@ -1,7 +1,9 @@
 import React from 'react';
-import { SECTORS } from '../utils/constants';
+import { useMetadata } from '../context/MetadataContext';
 
 export default function RegisterForm({ form, handleChange, handleSubmit, loading }: { form: any; handleChange: (e: any) => void; handleSubmit: (e: React.FormEvent) => void; loading: boolean; }) {
+  const { sectors } = useMetadata();
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="form-group">
@@ -54,7 +56,7 @@ export default function RegisterForm({ form, handleChange, handleSubmit, loading
           required
         >
           <option value="">Select Sector</option>
-          {SECTORS.map((sector) => (
+          {sectors.map((sector) => (
             <option key={sector.value} value={sector.value}>
               {sector.label}
             </option>

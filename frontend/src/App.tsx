@@ -1,6 +1,7 @@
 import './index.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { MetadataProvider } from './context/MetadataContext';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
 import PendingApproval from './pages/PendingApproval';
@@ -49,7 +50,9 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppContent />
+        <MetadataProvider>
+          <AppContent />
+        </MetadataProvider>
       </AuthProvider>
     </BrowserRouter>
   );

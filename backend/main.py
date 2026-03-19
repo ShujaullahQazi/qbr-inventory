@@ -25,7 +25,7 @@ app.add_middleware(
 @app.middleware("http")
 async def inject_user_id(request: Request, call_next):
     """Extract user_id from JWT and inject into request state for protected routes."""
-    public_paths = ["/auth/register", "/auth/login", "/docs", "/openapi.json", "/redoc", "/"]
+    public_paths = ["/auth/register", "/auth/login", "/docs", "/openapi.json", "/redoc", "/", "/metadata"]
     
     is_public = any(request.url.path.rstrip("/") == p.rstrip("/") for p in public_paths)
     
@@ -57,11 +57,13 @@ from routes.auth import router as auth_router
 from routes.listings import router as listings_router
 from routes.matches import router as matches_router
 from routes.admin import router as admin_router
+from routes.metadata import router as metadata_router
 
 app.include_router(auth_router)
 app.include_router(listings_router)
 app.include_router(matches_router)
 app.include_router(admin_router)
+app.include_router(metadata_router)
 
 
 @app.get("/", tags=["Health"])
