@@ -1481,6 +1481,59 @@ h5 {
 }
 
 /* ========================
+   FILTER TOGGLE
+   ======================== */
+.filter-toggle {
+  display: flex;
+  gap: 0;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.filter-toggle-btn {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  border-right: 1px solid var(--border-subtle);
+}
+
+.filter-toggle-btn:last-child {
+  border-right: none;
+}
+
+.filter-toggle-btn:hover {
+  background: var(--bg-glass-hover);
+  color: var(--text-primary);
+}
+
+.filter-toggle-btn.active {
+  background: var(--gradient-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Hide number input spinners */
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spinner {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+
+/* ========================
    RESPONSIVE
    ======================== */
 @media (max-width: 768px) {

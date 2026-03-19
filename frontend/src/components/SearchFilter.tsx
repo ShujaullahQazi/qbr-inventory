@@ -15,6 +15,12 @@ interface SearchFilterProps {
   loading: boolean;
 }
 
+const TYPE_OPTIONS = [
+  { value: '', label: 'All' },
+  { value: 'need', label: 'Needs' },
+  { value: 'available', label: 'Available' },
+];
+
 export default function SearchFilter({ onSearch, loading }: SearchFilterProps) {
   const { propertyTypes, propertySizes, sectors } = useMetadata();
   const [filters, setFilters] = useState({
@@ -26,13 +32,16 @@ export default function SearchFilter({ onSearch, loading }: SearchFilterProps) {
     budget_max: '',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-    const updated = { ...filters, [e.target.name]: e.target.value };
+  const setType = (value: string) => {
+    const updated = { ...filters, type: value };
     setFilters(updated);
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+    setFilters({ ...filters, [e.target.name]: e.target.value });
+  };
+
   const handleSearch = () => {
-    // Strip empty values before sending
     const params: SearchParams = {};
     Object.entries(filters).forEach(([key, value]) => {
       if (value) params[key as keyof SearchParams] = value;
@@ -48,35 +57,47 @@ export default function SearchFilter({ onSearch, loading }: SearchFilterProps) {
 
   return (
     <div className="search-bar">
+      {/* Type — toggle buttons */}
       <div className="form-group">
         <label className="form-label">Type</label>
-        <select className="form-select" name="type" value={filters.type} onChange={handleChange}>
-          <option value="">All</option>
-          <option value="need">Needs</option>
-          <option value="available">Available</option>
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Property</label>
-        <select className="form-select" name="property_type" value={filters.property_type} onChange={handleChange}>
-          <option value="">All Types</option>
-          {propertyTypes.map((t) => (
-            <option key={t.value} value={t.value}>{t.label}</option>
+        <div className="filter-toggle">
+          {TYPE_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              className={`filter-toggle-btn${filters.type === opt.value ? ' active' : ''}`}
+              onClick={() => setType(opt.value)}
+            >
+              {opt.label}
+            </button>
           ))}
-        </select>
+        </div>
       </div>
 
-      <div className="form-group">
-        <label className="form-label">Size</label>
-        <select className="form-select" name="size" value={filters.size} onChange={handleChange}>
-          <option value="">Any Size</option>
-          {propertySizes.map((s) => (
-            <option key={s.value} value={s.value}>{s.label}</option>
-          ))}
-        </select>
+      {/* Property + Size — same row */}
+      <div className="form-row">
+        <div className="form-group">
+          <label className="form-label">Property</label>
+          <select className="form-select" name="property_type" value={filters.property_type} onChange={handleChange}>
+            <option value="">All Types</option>
+            {propertyTypes.map((t) => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Size</label>
+          <select className="form-select" name="size" value={filters.size} onChange={handleChange}>
+            <option value="">Any Size</option>
+            {propertySizes.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
+      {/* Sector — full width */}
       <div className="form-group">
         <label className="form-label">Sector</label>
         <select className="form-select" name="location" value={filters.location} onChange={handleChange}>
@@ -87,30 +108,33 @@ export default function SearchFilter({ onSearch, loading }: SearchFilterProps) {
         </select>
       </div>
 
-      <div className="form-group">
-        <label className="form-label">Min Budget</label>
-        <input
-          className="form-input"
-          type="number"
-          name="budget_min"
-          value={filters.budget_min}
-          onChange={handleChange}
-          placeholder="PKR"
-        />
+      {/* Budget — same row, no spinners */}
+      <div className="form-row">
+        <div className="form-group">
+          <label className="form-label">Min Budget</label>
+          <input
+            className="form-input no-spinner"
+            type="number"
+            name="budget_min"
+            value={filters.budget_min}
+            onChange={handleChange}
+            placeholder="PKR"
+          />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Max Budget</label>
+          <input
+            className="form-input no-spinner"
+            type="number"
+            name="budget_max"
+            value={filters.budget_max}
+            onChange={handleChange}
+            placeholder="PKR"
+          />
+        </div>
       </div>
 
-      <div className="form-group">
-        <label className="form-label">Max Budget</label>
-        <input
-          className="form-input"
-          type="number"
-          name="budget_max"
-          value={filters.budget_max}
-          onChange={handleChange}
-          placeholder="PKR"
-        />
-      </div>
-
+      {/* Actions */}
       <div className="search-bar-actions">
         <button className="btn btn-primary btn-sm" onClick={handleSearch} disabled={loading}>
           🔍 Search
