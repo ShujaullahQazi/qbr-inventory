@@ -82,7 +82,7 @@ export default function RegisterForm({ form, handleChange, handleSubmit, loading
         disabled={loading}
         style={{ marginTop: '0.5rem' }}
       >
-        {loading ? '...' : 'Create Account'}
+        {loading ? <><span className="btn-spinner" />Creating account…</> : 'Create Account'}
       </button>
     </form>
   );

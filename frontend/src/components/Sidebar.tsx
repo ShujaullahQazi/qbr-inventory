@@ -42,9 +42,14 @@ export default function Sidebar({ myListingsCount, matchesCount, unreadCount, us
           {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
         </NavLink>
         {user?.role === 'admin' && (
-          <NavLink to="/users" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-            <span className="nav-icon">👥</span> Users
-          </NavLink>
+          <>
+            <NavLink to="/users" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+              <span className="nav-icon">👥</span> Users
+            </NavLink>
+            <NavLink to="/settings" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+              <span className="nav-icon">⚙️</span> Settings
+            </NavLink>
+          </>
         )}
       </nav>
 

@@ -39,6 +39,7 @@ function AppContent() {
       <Route path="/matches"       element={isAuthenticated ? (isVerified ? <Dashboard /> : <Navigate to="/pending" replace />) : <Navigate to="/auth" replace />} />
       <Route path="/notifications" element={isAuthenticated ? (isVerified ? <Dashboard /> : <Navigate to="/pending" replace />) : <Navigate to="/auth" replace />} />
       <Route path="/users"         element={isAuthenticated ? (isVerified ? <Dashboard /> : <Navigate to="/pending" replace />) : <Navigate to="/auth" replace />} />
+      <Route path="/settings"      element={isAuthenticated ? (isVerified ? <Dashboard /> : <Navigate to="/pending" replace />) : <Navigate to="/auth" replace />} />
 
       {/* Catch-all */}
       <Route path="*" element={<Navigate to={isAuthenticated ? (isVerified ? '/feed' : '/pending') : '/auth'} replace />} />

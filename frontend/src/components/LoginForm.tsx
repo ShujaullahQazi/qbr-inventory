@@ -36,7 +36,7 @@ export default function LoginForm({ form, handleChange, handleSubmit, loading }:
         disabled={loading}
         style={{ marginTop: '0.5rem' }}
       >
-        {loading ? '...' : 'Login'}
+        {loading ? <><span className="btn-spinner" />Signing in…</> : 'Login'}
       </button>
     </form>
   );

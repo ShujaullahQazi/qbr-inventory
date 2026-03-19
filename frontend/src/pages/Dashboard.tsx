@@ -8,6 +8,7 @@ import ListingsFeedView from '../components/ListingsFeedView';
 import MyListingsView from '../components/MyListingsView';
 import NotificationsView from '../components/NotificationsView';
 import AdminUsersView from '../components/AdminUsersView';
+import AdminSettingsView from '../components/AdminSettingsView';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { useState } from 'react';
 
@@ -136,6 +137,18 @@ export default function Dashboard() {
               </div>
             </div>
             <AdminUsersView />
+          </>
+        )}
+
+        {activeTab === 'settings' && user?.role === 'admin' && (
+          <>
+            <div className="page-header">
+              <div>
+                <h1>Settings</h1>
+                <p className="page-header-subtitle">Manage property types, sizes, and sectors</p>
+              </div>
+            </div>
+            <AdminSettingsView />
           </>
         )}
 
