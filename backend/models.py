@@ -47,6 +47,7 @@ class UserOut(BaseModel):
     phone: str
     sector: str
     agency_name: Optional[str] = None
+    role: str = "dealer"
     is_verified: bool = False
     created_at: datetime
 

@@ -63,4 +63,11 @@ export const notificationsAPI = {
   markAllRead: () => api.put('/matches/notifications/read-all'),
 };
 
+// Admin
+export const adminAPI = {
+  getPending: () => api.get('/admin/users/pending'),
+  approve: (userId: string) => api.put(`/admin/users/${userId}/approve`),
+  reject: (userId: string) => api.delete(`/admin/users/${userId}/reject`),
+};
+
 export default api;

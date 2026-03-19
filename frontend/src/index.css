@@ -1318,6 +1318,57 @@ h5 {
 }
 
 /* ========================
+   ADMIN USERS
+   ======================== */
+.admin-users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.admin-user-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.admin-user-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.admin-user-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* ========================
    RESPONSIVE
    ======================== */
 @media (max-width: 768px) {

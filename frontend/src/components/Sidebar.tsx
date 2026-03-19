@@ -41,6 +41,11 @@ export default function Sidebar({ myListingsCount, matchesCount, unreadCount, us
           <span className="nav-icon">🔔</span> Notifications
           {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
         </NavLink>
+        {user?.role === 'admin' && (
+          <NavLink to="/users" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+            <span className="nav-icon">👥</span> Users
+          </NavLink>
+        )}
       </nav>
 
       <div className="sidebar-user" ref={dropdownRef} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>

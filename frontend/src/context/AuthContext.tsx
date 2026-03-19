@@ -7,6 +7,8 @@ interface User {
   phone: string;
   sector?: string;
   agency_name?: string;
+  role?: string;
+  is_verified?: boolean;
 }
 
 interface AuthContextType {

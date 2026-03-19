@@ -16,9 +16,20 @@ def _get_user_id(request: Request) -> str:
     return user_id
 
 
+async def _require_verified(request: Request) -> str:
+    """Get user_id and verify the user is approved."""
+    user_id = _get_user_id(request)
+    if not ObjectId.is_valid(user_id):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    user = await users_collection.find_one({"_id": ObjectId(user_id)})
+    if not user or not user.get("is_verified", False):
+        raise HTTPException(status_code=403, detail="Account pending approval")
+    return user_id
+
+
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_listing(listing: ListingCreate, request: Request) -> Dict[str, Any]:
-    user_id = _get_user_id(request)
+    user_id = await _require_verified(request)
 
     listing_doc = {
         "user_id": user_id,

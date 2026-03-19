@@ -7,6 +7,7 @@ import Sidebar from '../components/Sidebar';
 import ListingsFeedView from '../components/ListingsFeedView';
 import MyListingsView from '../components/MyListingsView';
 import NotificationsView from '../components/NotificationsView';
+import AdminUsersView from '../components/AdminUsersView';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { useState } from 'react';
 
@@ -123,6 +124,18 @@ export default function Dashboard() {
               notifications={notifications}
               handleMarkRead={handleMarkRead}
             />
+          </>
+        )}
+
+        {activeTab === 'users' && user?.role === 'admin' && (
+          <>
+            <div className="page-header">
+              <div>
+                <h1>Manage Users</h1>
+                <p className="page-header-subtitle">Approve or reject pending dealer accounts</p>
+              </div>
+            </div>
+            <AdminUsersView />
           </>
         )}
 

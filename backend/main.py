@@ -56,10 +56,12 @@ async def inject_user_id(request: Request, call_next):
 from routes.auth import router as auth_router
 from routes.listings import router as listings_router
 from routes.matches import router as matches_router
+from routes.admin import router as admin_router
 
 app.include_router(auth_router)
 app.include_router(listings_router)
 app.include_router(matches_router)
+app.include_router(admin_router)
 
 
 @app.get("/", tags=["Health"])
