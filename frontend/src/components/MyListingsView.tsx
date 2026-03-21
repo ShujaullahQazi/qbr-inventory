@@ -1,7 +1,7 @@
 import React from 'react';
 import ListingCard from './ListingCard';
 
-export default function MyListingsView({ myListings, setShowCreateForm, handleDeleteListing }: { myListings: any[]; setShowCreateForm: (show: boolean) => void; handleDeleteListing: (id: string) => void }) {
+export default function MyListingsView({ myListings, setShowCreateForm, handleDeleteListing, onEdit }: { myListings: any[]; setShowCreateForm: (show: boolean) => void; handleDeleteListing: (id: string) => void; onEdit: (listing: any) => void }) {
   if (myListings.length === 0) {
     return (
       <div className="empty-state">
@@ -18,7 +18,7 @@ export default function MyListingsView({ myListings, setShowCreateForm, handleDe
   return (
     <div className="listings-grid">
       {myListings.map((listing) => (
-        <ListingCard key={listing._id} listing={listing} isMyListing={true} onDelete={handleDeleteListing} />
+        <ListingCard key={listing._id} listing={listing} isMyListing={true} onDelete={handleDeleteListing} onEdit={onEdit} />
       ))}
     </div>
   );

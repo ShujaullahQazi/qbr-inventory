@@ -2,6 +2,40 @@ from datetime import datetime, timezone
 from database import listings_collection, matches_collection, notifications_collection, users_collection
 
 
+MATCH_CRITICAL_FIELDS = {"type", "property_type", "size", "location"}
+
+
+async def remove_stale_matches(listing_id: str) -> int:
+    """
+    Remove all matches (and their notifications) that reference this listing.
+    Called before re-matching when a listing's critical fields change.
+    Returns the count of removed matches.
+    """
+    stale = await matches_collection.find({
+        "$or": [
+            {"need_listing_id": listing_id},
+            {"available_listing_id": listing_id},
+        ]
+    }).to_list(500)
+
+    if not stale:
+        return 0
+
+    match_ids = [str(m["_id"]) for m in stale]
+
+    # Remove notifications tied to these matches
+    await notifications_collection.delete_many({"match_id": {"$in": match_ids}})
+
+    # Remove the match records themselves
+    await matches_collection.delete_many({
+        "$or": [
+            {"need_listing_id": listing_id},
+            {"available_listing_id": listing_id},
+        ]
+    })
+
+    return len(stale)
+
 async def find_matches_for_listing(listing: dict) -> list:
     """
     When a new listing is created, find potential matches:

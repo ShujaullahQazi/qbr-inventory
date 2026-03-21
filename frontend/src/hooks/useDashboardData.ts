@@ -111,6 +111,16 @@ export function useDashboardData() {
     }
   };
 
+  const handleListingUpdated = (data: any) => {
+    fetchListings(searchParams);
+    fetchMyListings();
+    // If backend detected critical changes and found new matches, refresh those too
+    if (data?.matches_found > 0 || data?.stale_removed > 0 || data?.critical_changed) {
+      fetchMatches();
+      fetchNotifications();
+    }
+  };
+
   return {
     listings,
     myListings,
@@ -124,6 +134,7 @@ export function useDashboardData() {
     handleSearch,
     handlePageChange,
     handleListingCreated,
+    handleListingUpdated,
     handleDeleteListing,
     handleMarkAllRead,
     handleMarkRead

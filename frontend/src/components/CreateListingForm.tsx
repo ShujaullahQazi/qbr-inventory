@@ -1,8 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { listingsAPI } from '../services/api';
 import { useMetadata } from '../context/MetadataContext';
 
-export default function CreateListingForm({ onClose, onCreated }: { onClose?: () => void; onCreated?: (data: unknown) => void }) {
+interface Listing {
+  _id: string;
+  type: string;
+  property_type: string;
+  size: string;
+  location: string;
+  budget?: number | null;
+  description?: string | null;
+  contact_note?: string | null;
+  status?: string;
+}
+
+interface CreateListingFormProps {
+  onClose?: () => void;
+  onCreated?: (data: unknown) => void;
+  /** When provided, form enters edit mode and pre-fills with this listing's data */
+  editListing?: Listing | null;
+}
+
+export default function CreateListingForm({ onClose, onCreated, editListing }: CreateListingFormProps) {
   const { propertyTypes, propertySizes, sectors } = useMetadata();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -15,6 +34,23 @@ export default function CreateListingForm({ onClose, onCreated }: { onClose?: ()
     description: '',
     contact_note: '',
   });
+
+  const isEditMode = !!editListing;
+
+  // Pre-fill form when editing
+  useEffect(() => {
+    if (editListing) {
+      setForm({
+        type: editListing.type || 'need',
+        property_type: editListing.property_type || '',
+        size: editListing.size || '',
+        location: editListing.location || '',
+        budget: editListing.budget != null ? String(editListing.budget) : '',
+        description: editListing.description || '',
+        contact_note: editListing.contact_note || '',
+      });
+    }
+  }, [editListing]);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -33,12 +69,19 @@ export default function CreateListingForm({ onClose, onCreated }: { onClose?: ()
         description: form.description || null,
         contact_note: form.contact_note || null,
       };
-      const res = await listingsAPI.create(payload);
+
+      let res;
+      if (isEditMode) {
+        res = await listingsAPI.update(editListing._id, payload);
+      } else {
+        res = await listingsAPI.create(payload);
+      }
+
       if (onCreated) onCreated(res.data);
       if (onClose) onClose();
     } catch (err: unknown) {
       const error = err as { response?: { data?: { detail?: string } } };
-      setError(error.response?.data?.detail || 'Failed to create listing');
+      setError(error.response?.data?.detail || `Failed to ${isEditMode ? 'update' : 'create'} listing`);
     } finally {
       setLoading(false);
     }
@@ -48,7 +91,7 @@ export default function CreateListingForm({ onClose, onCreated }: { onClose?: ()
     <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose?.()}>
       <div className="modal">
         <div className="modal-header">
-          <h2>📋 Post New Listing</h2>
+          <h2>{isEditMode ? '✏️ Edit Listing' : '📋 Post New Listing'}</h2>
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
 
@@ -173,7 +216,12 @@ export default function CreateListingForm({ onClose, onCreated }: { onClose?: ()
             className="btn btn-primary btn-block btn-lg"
             disabled={loading}
           >
-            {loading ? 'Posting...' : form.type === 'need' ? '🔍 Post Need' : '✅ Post Available'}
+            {loading
+              ? (isEditMode ? 'Saving...' : 'Posting...')
+              : isEditMode
+                ? '💾 Save Changes'
+                : form.type === 'need' ? '🔍 Post Need' : '✅ Post Available'
+            }
           </button>
         </form>
       </div>

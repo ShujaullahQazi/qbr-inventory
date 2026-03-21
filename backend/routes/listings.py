@@ -4,7 +4,7 @@ from typing import Optional, Dict, Any
 from bson import ObjectId
 from database import listings_collection, users_collection
 from models import ListingCreate, ListingUpdate
-from utils.matching import find_matches_for_listing, create_matches_and_notify
+from utils.matching import find_matches_for_listing, create_matches_and_notify, remove_stale_matches, MATCH_CRITICAL_FIELDS
 
 router = APIRouter(prefix="/listings", tags=["Listings"])
 
@@ -151,7 +151,7 @@ async def get_my_listings(request: Request) -> Dict[str, Any]:
 
 
 @router.put("/{listing_id}")
-async def update_listing(listing_id: str, update: ListingUpdate, request: Request) -> Dict[str, str]:
+async def update_listing(listing_id: str, update: ListingUpdate, request: Request) -> Dict[str, Any]:
     user_id = _get_user_id(request)
     if not ObjectId.is_valid(listing_id):
         raise HTTPException(status_code=400, detail="Invalid listing ID")
@@ -166,8 +166,35 @@ async def update_listing(listing_id: str, update: ListingUpdate, request: Reques
     if not update_data:
         raise HTTPException(status_code=400, detail="No fields to update")
 
+    # Check if any match-critical fields changed
+    critical_changed = any(
+        k in MATCH_CRITICAL_FIELDS and update_data[k] != listing.get(k)
+        for k in update_data
+    )
+
     await listings_collection.update_one({"_id": ObjectId(listing_id)}, {"$set": update_data})
-    return {"message": "Listing updated successfully"}
+
+    matches_found = 0
+    stale_removed = 0
+
+    if critical_changed and listing.get("status") == "active":
+        # Remove old matches that are now stale
+        stale_removed = await remove_stale_matches(listing_id)
+
+        # Re-fetch the updated listing for fresh matching
+        updated_listing = await listings_collection.find_one({"_id": ObjectId(listing_id)})
+        if updated_listing:
+            matched = await find_matches_for_listing(updated_listing)
+            if matched:
+                match_ids = await create_matches_and_notify(updated_listing, matched)
+                matches_found = len(match_ids)
+
+    return {
+        "message": "Listing updated successfully",
+        "critical_changed": critical_changed,
+        "stale_removed": stale_removed,
+        "matches_found": matches_found,
+    }
 
 
 @router.delete("/{listing_id}")

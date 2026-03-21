@@ -18,7 +18,7 @@ export function timeAgo(dateStr: string) {
   return `${days}d ago`;
 }
 
-export default function ListingCard({ listing, isMyListing, onDelete }: { listing: any; isMyListing: boolean; onDelete?: (id: string) => void }) {
+export default function ListingCard({ listing, isMyListing, onDelete, onEdit }: { listing: any; isMyListing: boolean; onDelete?: (id: string) => void; onEdit?: (listing: any) => void }) {
   return (
     <div className={`listing-card ${listing.type}`}>
       <div className="listing-header">
@@ -60,6 +60,9 @@ export default function ListingCard({ listing, isMyListing, onDelete }: { listin
               {listing.status.toUpperCase()}
             </span>
             <div className="listing-actions">
+              <button className="btn btn-ghost btn-sm" onClick={() => onEdit?.(listing)}>
+                ✏️ Edit
+              </button>
               <button className="btn btn-danger btn-sm" onClick={() => onDelete?.(listing._id)}>
                 🗑 Delete
               </button>

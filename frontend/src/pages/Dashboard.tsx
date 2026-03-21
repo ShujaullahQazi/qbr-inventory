@@ -17,6 +17,7 @@ export default function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingListing, setEditingListing] = useState<any>(null);
 
   // Derive active tab from URL path (strip leading slash)
   const activeTab = location.pathname.replace('/', '') || 'feed';
@@ -36,10 +37,30 @@ export default function Dashboard() {
     handleSearch,
     handlePageChange,
     handleListingCreated,
+    handleListingUpdated,
     handleDeleteListing,
     handleMarkAllRead,
     handleMarkRead
   } = useDashboardData();
+
+  const handleEdit = (listing: any) => {
+    setEditingListing(listing);
+    setShowCreateForm(false); // close create form if open
+  };
+
+  const handleFormClose = () => {
+    setShowCreateForm(false);
+    setEditingListing(null);
+  };
+
+  const handleFormSubmit = (data: unknown) => {
+    if (editingListing) {
+      handleListingUpdated(data);
+    } else {
+      handleListingCreated(data);
+    }
+    handleFormClose();
+  };
 
   return (
     <div className="app-layout">
@@ -92,6 +113,7 @@ export default function Dashboard() {
               myListings={myListings}
               setShowCreateForm={setShowCreateForm}
               handleDeleteListing={handleDeleteListing}
+              onEdit={handleEdit}
             />
           </>
         )}
@@ -152,14 +174,16 @@ export default function Dashboard() {
           </>
         )}
 
-        {/* Create Listing Modal */}
-        {showCreateForm && (
+        {/* Create / Edit Listing Modal */}
+        {(showCreateForm || editingListing) && (
           <CreateListingForm
-            onClose={() => setShowCreateForm(false)}
-            onCreated={handleListingCreated}
+            onClose={handleFormClose}
+            onCreated={handleFormSubmit}
+            editListing={editingListing}
           />
         )}
       </main>
     </div>
   );
 }
+
