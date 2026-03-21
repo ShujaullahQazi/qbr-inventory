@@ -25,9 +25,13 @@ app.add_middleware(
 @app.middleware("http")
 async def inject_user_id(request: Request, call_next):
     """Extract user_id from JWT and inject into request state for protected routes."""
-    public_paths = ["/auth/register", "/auth/login", "/docs", "/openapi.json", "/redoc", "/", "/metadata"]
+    public_paths = ["/auth/register", "/auth/login", "/docs", "/openapi.json", "/redoc", "/"]
     
     is_public = any(request.url.path.rstrip("/") == p.rstrip("/") for p in public_paths)
+
+    # GET /metadata is public (dropdowns), but PUT /metadata is admin-only
+    if request.url.path.rstrip("/") == "/metadata" and request.method == "GET":
+        is_public = True
     
     if not is_public:
         auth_header = request.headers.get("Authorization")

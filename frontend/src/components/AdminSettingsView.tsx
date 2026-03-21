@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMetadata } from '../context/MetadataContext';
 import { adminAPI } from '../services/api';
 
@@ -35,6 +35,16 @@ export default function AdminSettingsView() {
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState('');
+
+  // Keep local state in sync when metadata context refreshes
+  useEffect(() => {
+    setLists({
+      property_types: propertyTypes.map((o) => o.value),
+      property_sizes: propertySizes.map((o) => o.value),
+      sectors: sectors.map((o) => o.value),
+    });
+  }, [propertyTypes, propertySizes, sectors]);
 
   const addItem = (key: MetadataKey) => {
     const val = inputs[key].trim();
@@ -52,14 +62,17 @@ export default function AdminSettingsView() {
   const handleSave = async () => {
     try {
       setSaving(true);
+      setError('');
       await adminAPI.updateMetadata({
         property_types: lists.property_types,
         property_sizes: lists.property_sizes,
         sectors: lists.sectors,
       });
-      await refresh(); // Force MetadataContext to re-fetch (cache cleared by backend)
+      await refresh();
       setSaved(true);
-    } catch (err) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to save metadata';
+      setError(message);
       console.error('Failed to save metadata', err);
     } finally {
       setSaving(false);
@@ -110,6 +123,7 @@ export default function AdminSettingsView() {
 
       <div className="admin-settings-footer">
         {saved && <span className="admin-settings-saved">✓ Saved successfully</span>}
+        {error && <span className="admin-settings-error">⚠ {error}</span>}
         <button
           className="btn btn-primary"
           onClick={handleSave}
