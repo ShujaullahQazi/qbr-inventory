@@ -1727,10 +1727,6 @@ h5 {
     grid-template-columns: 1fr;
   }
 
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
   .match-sides {
     grid-template-columns: 1fr;
   }
@@ -1756,6 +1752,7 @@ h5 {
   .search-bar-actions {
     width: 100%;
     padding-bottom: 0;
+    flex-direction: row; /* keep buttons side-by-side */
   }
 
   .search-bar-actions .btn {
