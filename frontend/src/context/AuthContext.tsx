@@ -22,13 +22,28 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+/** Try to parse the cached user from localStorage. Returns null on any failure. */
+function getCachedUser(): User | null {
+  try {
+    const raw = localStorage.getItem('user');
+    return raw ? (JSON.parse(raw) as User) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true);
+  const storedToken = localStorage.getItem('token');
+  const cachedUser = storedToken ? getCachedUser() : null;
+
+  const [user, setUser] = useState<User | null>(cachedUser);
+  const [token, setToken] = useState(storedToken);
+  // If we have a cached user, skip the loading spinner entirely
+  const [loading, setLoading] = useState(!cachedUser && !!storedToken);
 
   useEffect(() => {
     if (token) {
+      // Background-validate the token — don't block the UI if we already have a cached user
       authAPI.getMe()
         .then((res) => {
           setUser(res.data);

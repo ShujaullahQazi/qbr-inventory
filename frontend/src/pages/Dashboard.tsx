@@ -1,16 +1,19 @@
+import { lazy, Suspense } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SearchFilter from '../components/SearchFilter';
-import CreateListingForm from '../components/CreateListingForm';
-import MatchesView from '../components/MatchesView';
 import Sidebar from '../components/Sidebar';
 import ListingsFeedView from '../components/ListingsFeedView';
 import MyListingsView from '../components/MyListingsView';
 import NotificationsView from '../components/NotificationsView';
-import AdminUsersView from '../components/AdminUsersView';
-import AdminSettingsView from '../components/AdminSettingsView';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { useState } from 'react';
+
+// Heavy components — lazy-loaded per tab
+const CreateListingForm = lazy(() => import('../components/CreateListingForm'));
+const MatchesView = lazy(() => import('../components/MatchesView'));
+const AdminUsersView = lazy(() => import('../components/AdminUsersView'));
+const AdminSettingsView = lazy(() => import('../components/AdminSettingsView'));
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -126,7 +129,9 @@ export default function Dashboard() {
                 <p className="page-header-subtitle">Listings from other dealers that match your inventory needs</p>
               </div>
             </div>
-            <MatchesView matches={matches} onRefresh={() => { fetchMatches(); fetchNotifications(); }} />
+            <Suspense fallback={<div className="loading-page"><div className="spinner" /></div>}>
+              <MatchesView matches={matches} onRefresh={() => { fetchMatches(); fetchNotifications(); }} />
+            </Suspense>
           </>
         )}
 
@@ -158,7 +163,9 @@ export default function Dashboard() {
                 <p className="page-header-subtitle">Approve or reject pending dealer accounts</p>
               </div>
             </div>
-            <AdminUsersView />
+            <Suspense fallback={<div className="loading-page"><div className="spinner" /></div>}>
+              <AdminUsersView />
+            </Suspense>
           </>
         )}
 
@@ -170,17 +177,21 @@ export default function Dashboard() {
                 <p className="page-header-subtitle">Manage property types, sizes, and sectors</p>
               </div>
             </div>
-            <AdminSettingsView />
+            <Suspense fallback={<div className="loading-page"><div className="spinner" /></div>}>
+              <AdminSettingsView />
+            </Suspense>
           </>
         )}
 
         {/* Create / Edit Listing Modal */}
         {(showCreateForm || editingListing) && (
-          <CreateListingForm
-            onClose={handleFormClose}
-            onCreated={handleFormSubmit}
-            editListing={editingListing}
-          />
+          <Suspense fallback={<div className="loading-page"><div className="spinner" /></div>}>
+            <CreateListingForm
+              onClose={handleFormClose}
+              onCreated={handleFormSubmit}
+              editListing={editingListing}
+            />
+          </Suspense>
         )}
       </main>
     </div>
