@@ -38,7 +38,17 @@ export default function SearchFilter({ onSearch, loading }: SearchFilterProps) {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+    if (name === 'budget_min' || name === 'budget_max') {
+      value = value.replace(/[^0-9]/g, '');
+    }
+    setFilters({ ...filters, [name]: value });
+  };
+
+  const formatNumber = (val: string) => {
+    if (!val) return '';
+    const num = parseInt(val, 10);
+    return isNaN(num) ? '' : num.toLocaleString('en-US');
   };
 
   const handleSearch = () => {
@@ -113,10 +123,11 @@ export default function SearchFilter({ onSearch, loading }: SearchFilterProps) {
         <div className="form-group">
           <label className="form-label">Min Budget</label>
           <input
-            className="form-input no-spinner"
-            type="number"
+            className="form-input"
+            type="text"
+            inputMode="numeric"
             name="budget_min"
-            value={filters.budget_min}
+            value={formatNumber(filters.budget_min)}
             onChange={handleChange}
             placeholder="PKR"
           />
@@ -124,10 +135,11 @@ export default function SearchFilter({ onSearch, loading }: SearchFilterProps) {
         <div className="form-group">
           <label className="form-label">Max Budget</label>
           <input
-            className="form-input no-spinner"
-            type="number"
+            className="form-input"
+            type="text"
+            inputMode="numeric"
             name="budget_max"
-            value={filters.budget_max}
+            value={formatNumber(filters.budget_max)}
             onChange={handleChange}
             placeholder="PKR"
           />

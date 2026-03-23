@@ -53,8 +53,21 @@ export default function CreateListingForm({ onClose, onCreated, editListing }: C
   }, [editListing]);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+    // Format budget input with commas, but only store numbers in state
+    if (name === 'budget') {
+      const numericValue = value.replace(/[^0-9]/g, '');
+      value = numericValue;
+    }
+    setForm({ ...form, [name]: value });
     setError('');
+  };
+
+  // Helper to format the displayed value with commas
+  const formatNumber = (val: string) => {
+    if (!val) return '';
+    const num = parseInt(val, 10);
+    return isNaN(num) ? '' : num.toLocaleString('en-US');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -156,7 +169,7 @@ export default function CreateListingForm({ onClose, onCreated, editListing }: C
 
             {/* Location */}
             <div className="form-group">
-              <label className="form-label">Location / Sector</label>
+              <label className="form-label">Location</label>
               <select
                 className="form-select"
                 name="location"
@@ -174,14 +187,16 @@ export default function CreateListingForm({ onClose, onCreated, editListing }: C
 
           {/* Budget */}
           <div className="form-group">
-            <label className="form-label">Budget (PKR) — Optional</label>
+            <label className="form-label">Budget (PKR)</label>
             <input
               className="form-input"
-              type="number"
+              type="text"
+              inputMode="numeric"
               name="budget"
-              value={form.budget}
+              value={formatNumber(form.budget)}
               onChange={handleChange}
-              placeholder="e.g. 5000000"
+              placeholder="e.g. 5,000,000"
+              required
             />
           </div>
 
