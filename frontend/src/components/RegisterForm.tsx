@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMetadata } from '../context/MetadataContext';
 
-export default function RegisterForm({ form, handleChange, handleSubmit, loading }: { form: any; handleChange: (e: any) => void; handleSubmit: (e: React.FormEvent) => void; loading: boolean; }) {
+export default function RegisterForm({ form, handleChange, handleSubmit, loading }: { form: Record<string, string>; handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void; handleSubmit: (e: React.FormEvent) => void; loading: boolean; }) {
   const { sectors } = useMetadata();
 
   return (

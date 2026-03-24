@@ -1,6 +1,7 @@
 import React from 'react';
+import { Listing } from '../types';
 
-function formatBudget(val: any) {
+function formatBudget(val: number | null | undefined) {
   if (!val) return '—';
   if (val >= 10000000) return `${(val / 10000000).toFixed(1)} Cr`;
   if (val >= 100000) return `${(val / 100000).toFixed(1)} Lac`;
@@ -18,7 +19,7 @@ export function timeAgo(dateStr: string) {
   return `${days}d ago`;
 }
 
-export default function ListingCard({ listing, isMyListing, onDelete, onEdit }: { listing: any; isMyListing: boolean; onDelete?: (id: string) => void; onEdit?: (listing: any) => void }) {
+export default function ListingCard({ listing, isMyListing, onDelete, onEdit }: { listing: Listing; isMyListing: boolean; onDelete?: (id: string) => void; onEdit?: (listing: Listing) => void }) {
   return (
     <div className={`listing-card ${listing.type}`}>
       <div className="listing-header">

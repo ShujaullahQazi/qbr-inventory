@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { User } from '../types';
 
-export default function Sidebar({ myListingsCount, matchesCount, unreadCount, user, logout }: { myListingsCount: number; matchesCount: number; unreadCount: number; user: any; logout: () => void }) {
+export default function Sidebar({ myListingsCount, matchesCount, unreadCount, user, logout }: { myListingsCount: number; matchesCount: number; unreadCount: number; user: User | null; logout: () => void }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

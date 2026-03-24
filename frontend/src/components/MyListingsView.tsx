@@ -1,7 +1,8 @@
 import React from 'react';
 import ListingCard from './ListingCard';
+import { Listing } from '../types';
 
-export default function MyListingsView({ myListings, setShowCreateForm, handleDeleteListing, onEdit }: { myListings: any[]; setShowCreateForm: (show: boolean) => void; handleDeleteListing: (id: string) => void; onEdit: (listing: any) => void }) {
+export default function MyListingsView({ myListings, setShowCreateForm, handleDeleteListing, onEdit }: { myListings: Listing[]; setShowCreateForm: (show: boolean) => void; handleDeleteListing: (id: string) => void; onEdit: (listing: Listing) => void }) {
   if (myListings.length === 0) {
     return (
       <div className="empty-state">

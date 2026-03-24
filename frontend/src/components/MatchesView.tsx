@@ -1,6 +1,7 @@
 import MatchCard from './MatchCard';
+import { Match } from '../types';
 
-export default function MatchesView({ matches, onRefresh }: { matches: any[]; onRefresh?: () => void }) {
+export default function MatchesView({ matches, onRefresh }: { matches: Match[]; onRefresh?: () => void }) {
   if (!matches || matches.length === 0) {
     return (
       <div className="empty-state">

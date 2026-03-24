@@ -1,6 +1,7 @@
 import { matchesAPI } from '../services/api';
+import { Match } from '../types';
 
-function formatBudget(val: any) {
+function formatBudget(val: number | null | undefined) {
   if (!val) return '—';
   if (val >= 10000000) return `${(val / 10000000).toFixed(1)} Cr`;
   if (val >= 100000) return `${(val / 100000).toFixed(1)} Lac`;
@@ -18,7 +19,7 @@ function timeAgo(dateStr: string) {
   return `${days}d ago`;
 }
 
-export default function MatchCard({ match, onRefresh }: { match: any; onRefresh?: () => void }) {
+export default function MatchCard({ match, onRefresh }: { match: Match; onRefresh?: () => void }) {
   const handleStatus = async (matchId: string, status: string) => {
     try {
       await matchesAPI.updateStatus(matchId, status);

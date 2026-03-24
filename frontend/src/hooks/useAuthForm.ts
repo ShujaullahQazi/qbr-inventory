@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 export function useAuthForm() {
   const { login } = useAuth();
+  const { addToast } = useToast();
   const [mode, setMode] = useState('login');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,12 +18,12 @@ export function useAuthForm() {
     agency_name: '',
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError('');
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Client-side pre-validation
@@ -56,13 +58,18 @@ export function useAuthForm() {
         });
       }
       login(res.data.token, res.data.user);
-    } catch (err: any) {
-      if (err.response?.status === 422 && Array.isArray(err.response.data.detail)) {
+      addToast('Successfully authenticated!', 'success');
+    } catch (err: unknown) {
+      const error = err as { response?: { status?: number, data?: { detail?: any } } };
+      if (error.response?.status === 422 && Array.isArray(error.response?.data?.detail)) {
         // Handle Pydantic validation errors nicely
-        const msg = err.response.data.detail[0]?.msg;
+        const msg = error.response?.data?.detail[0]?.msg;
         setError(`Validation error: ${msg}`);
+        addToast(`Validation error: ${msg}`, 'error');
       } else {
-        setError(err.response?.data?.detail || 'Something went wrong. Please check your connection and try again.');
+        const msg = typeof error.response?.data?.detail === 'string' ? error.response.data.detail : 'Something went wrong. Please check your connection and try again.';
+        setError(msg);
+        addToast(msg, 'error');
       }
     } finally {
       setLoading(false);

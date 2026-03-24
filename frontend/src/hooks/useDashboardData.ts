@@ -1,23 +1,24 @@
 import { useState, useCallback, useEffect } from 'react';
 import { listingsAPI, matchesAPI, notificationsAPI } from '../services/api';
+import { Listing, Match, Notification, SearchParams, ListingSubmissionResponse } from '../types';
 
 export function useDashboardData() {
-  const [listings, setListings] = useState<any[]>([]);
-  const [myListings, setMyListings] = useState<any[]>([]);
-  const [matches, setMatches] = useState<any[]>([]);
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [myListings, setMyListings] = useState<Listing[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0, limit: 20 });
   const [loading, setLoading] = useState(false);
-  const [searchParams, setSearchParams] = useState<any>({});
+  const [searchParams, setSearchParams] = useState<SearchParams>({});
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
-  const fetchListings = useCallback(async (params: any = {}) => {
+  const fetchListings = useCallback(async (params: SearchParams = {}) => {
     setLoading(true);
     try {
       const res = await listingsAPI.getAll({ ...params, page: params.page || 1 });
       setListings(res.data.listings);
-      setPagination({ page: res.data.page, pages: res.data.pages, total: res.data.total });
+      setPagination({ page: res.data.page, pages: res.data.pages, total: res.data.total, limit: res.data.limit || 20 });
     } catch (err) {
       console.error('Failed to fetch listings:', err);
     } finally {
@@ -64,7 +65,7 @@ export function useDashboardData() {
     return () => clearInterval(interval);
   }, [fetchNotifications]);
 
-  const handleSearch = (params: any) => {
+  const handleSearch = (params: SearchParams) => {
     setSearchParams(params);
     fetchListings(params);
   };
@@ -73,10 +74,10 @@ export function useDashboardData() {
     fetchListings({ ...searchParams, page: newPage });
   };
 
-  const handleListingCreated = (data: any) => {
+  const handleListingCreated = (data: ListingSubmissionResponse) => {
     fetchListings(searchParams);
     fetchMyListings();
-    if (data.matches_found > 0) {
+    if (data.matches_found && data.matches_found > 0) {
       fetchMatches();
       fetchNotifications();
     }
@@ -111,11 +112,11 @@ export function useDashboardData() {
     }
   };
 
-  const handleListingUpdated = (data: any) => {
+  const handleListingUpdated = (data: ListingSubmissionResponse) => {
     fetchListings(searchParams);
     fetchMyListings();
     // If backend detected critical changes and found new matches, refresh those too
-    if (data?.matches_found > 0 || data?.stale_removed > 0 || data?.critical_changed) {
+    if (data?.matches_found || data?.stale_removed || data?.critical_changed) {
       fetchMatches();
       fetchNotifications();
     }

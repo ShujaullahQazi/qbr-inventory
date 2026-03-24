@@ -1,13 +1,15 @@
 import React from 'react';
 import ListingCard from './ListingCard';
+import SkeletonListings from './SkeletonListings';
+import { Listing, PaginatedResponse } from '../types';
 
 export default function ListingsFeedView({ 
   loading, 
   listings, 
   pagination, 
   handlePageChange 
-}: { loading: boolean; listings: any[]; pagination: any; handlePageChange: (page: number) => void }) {
-  if (loading) return <div className="spinner" />;
+}: { loading: boolean; listings: Listing[]; pagination: Omit<PaginatedResponse<Listing>, 'items'>; handlePageChange: (page: number) => void }) {
+  if (loading) return <SkeletonListings count={3} />;
   
   if (listings.length === 0) {
     return (

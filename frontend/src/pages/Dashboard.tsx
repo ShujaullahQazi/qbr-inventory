@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SearchFilter from '../components/SearchFilter';
 import Sidebar from '../components/Sidebar';
@@ -8,6 +8,7 @@ import MyListingsView from '../components/MyListingsView';
 import NotificationsView from '../components/NotificationsView';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { useState } from 'react';
+import { Listing, ListingSubmissionResponse } from '../types';
 
 // Heavy components — lazy-loaded per tab
 const CreateListingForm = lazy(() => import('../components/CreateListingForm'));
@@ -17,14 +18,8 @@ const AdminSettingsView = lazy(() => import('../components/AdminSettingsView'));
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingListing, setEditingListing] = useState<any>(null);
-
-  // Derive active tab from URL path (strip leading slash)
-  const activeTab = location.pathname.replace('/', '') || 'feed';
-  const setActiveTab = (tab: string) => navigate(`/${tab}`);
+  const [editingListing, setEditingListing] = useState<Listing | null>(null);
 
   // Use custom hook for data management
   const {
@@ -46,7 +41,7 @@ export default function Dashboard() {
     handleMarkRead
   } = useDashboardData();
 
-  const handleEdit = (listing: any) => {
+  const handleEdit = (listing: Listing) => {
     setEditingListing(listing);
     setShowCreateForm(false); // close create form if open
   };
@@ -56,7 +51,7 @@ export default function Dashboard() {
     setEditingListing(null);
   };
 
-  const handleFormSubmit = (data: unknown) => {
+  const handleFormSubmit = (data: ListingSubmissionResponse) => {
     if (editingListing) {
       handleListingUpdated(data);
     } else {
@@ -78,110 +73,120 @@ export default function Dashboard() {
 
       {/* Main */}
       <main className="main-content">
-        {/* Tab Content */}
-        {activeTab === 'feed' && (
-          <>
-            <div className="page-header">
-              <div>
-                <h1>All Listings</h1>
-                <p className="page-header-subtitle">Browse and search properties from all dealers in your network</p>
-              </div>
-              <button className="btn btn-primary" onClick={() => setShowCreateForm(true)}>
-                + New Listing
-              </button>
-            </div>
-
-            <SearchFilter onSearch={handleSearch} loading={loading} />
-            <ListingsFeedView 
-              loading={loading}
-              listings={listings}
-              pagination={pagination}
-              handlePageChange={handlePageChange}
-            />
-          </>
-        )}
-
-        {activeTab === 'my' && (
-          <>
-            <div className="page-header">
-              <div>
-                <h1>My Posts</h1>
-                <p className="page-header-subtitle">Manage your active needs and available inventory</p>
-              </div>
-              <button className="btn btn-primary" onClick={() => setShowCreateForm(true)}>
-                + New Listing
-              </button>
-            </div>
-            <MyListingsView 
-              myListings={myListings}
-              setShowCreateForm={setShowCreateForm}
-              handleDeleteListing={handleDeleteListing}
-              onEdit={handleEdit}
-            />
-          </>
-        )}
-
-        {activeTab === 'matches' && (
-          <>
-            <div className="page-header">
-              <div>
-                <h1>Your Matches</h1>
-                <p className="page-header-subtitle">Listings from other dealers that match your inventory needs</p>
-              </div>
-            </div>
-            <Suspense fallback={<div className="loading-page"><div className="spinner" /></div>}>
-              <MatchesView matches={matches} onRefresh={() => { fetchMatches(); fetchNotifications(); }} />
-            </Suspense>
-          </>
-        )}
-
-        {activeTab === 'notifications' && (
-          <>
-            <div className="page-header">
-              <div>
-                <h1>Notifications</h1>
-                <p className="page-header-subtitle">{unreadCount} unread alert{unreadCount !== 1 ? 's' : ''}</p>
-              </div>
-              {unreadCount > 0 && (
-                <button className="btn btn-ghost" onClick={handleMarkAllRead}>
-                  ✓ Mark All Read
+        {/* Nested Routes for Tab Content */}
+        <Routes>
+          <Route path="/" element={<Navigate to="feed" replace />} />
+          
+          <Route path="feed" element={
+            <>
+              <div className="page-header">
+                <div>
+                  <h1>All Listings</h1>
+                  <p className="page-header-subtitle">Browse and search properties from all dealers in your network</p>
+                </div>
+                <button className="btn btn-primary" onClick={() => setShowCreateForm(true)}>
+                  + New Listing
                 </button>
-              )}
-            </div>
-            <NotificationsView 
-              notifications={notifications}
-              handleMarkRead={handleMarkRead}
-            />
-          </>
-        )}
-
-        {activeTab === 'users' && user?.role === 'admin' && (
-          <>
-            <div className="page-header">
-              <div>
-                <h1>Manage Users</h1>
-                <p className="page-header-subtitle">Approve or reject pending dealer accounts</p>
               </div>
-            </div>
-            <Suspense fallback={<div className="loading-page"><div className="spinner" /></div>}>
-              <AdminUsersView />
-            </Suspense>
-          </>
-        )}
 
-        {activeTab === 'settings' && user?.role === 'admin' && (
-          <>
-            <div className="page-header">
-              <div>
-                <h1>Settings</h1>
-                <p className="page-header-subtitle">Manage property types, sizes, and sectors</p>
+              <SearchFilter onSearch={handleSearch} loading={loading} />
+              <ListingsFeedView 
+                loading={loading}
+                listings={listings}
+                pagination={pagination}
+                handlePageChange={handlePageChange}
+              />
+            </>
+          } />
+
+          <Route path="my" element={
+            <>
+              <div className="page-header">
+                <div>
+                  <h1>My Posts</h1>
+                  <p className="page-header-subtitle">Manage your active needs and available inventory</p>
+                </div>
+                <button className="btn btn-primary" onClick={() => setShowCreateForm(true)}>
+                  + New Listing
+                </button>
               </div>
-            </div>
-            <Suspense fallback={<div className="loading-page"><div className="spinner" /></div>}>
-              <AdminSettingsView />
-            </Suspense>
-          </>
-        )}
+              <MyListingsView 
+                myListings={myListings}
+                setShowCreateForm={setShowCreateForm}
+                handleDeleteListing={handleDeleteListing}
+                onEdit={handleEdit}
+              />
+            </>
+          } />
+
+          <Route path="matches" element={
+            <>
+              <div className="page-header">
+                <div>
+                  <h1>Your Matches</h1>
+                  <p className="page-header-subtitle">Listings from other dealers that match your inventory needs</p>
+                </div>
+              </div>
+              <Suspense fallback={<div className="loading-page"><div className="spinner" /></div>}>
+                <MatchesView matches={matches} onRefresh={() => { fetchMatches(); fetchNotifications(); }} />
+              </Suspense>
+            </>
+          } />
+
+          <Route path="notifications" element={
+            <>
+              <div className="page-header">
+                <div>
+                  <h1>Notifications</h1>
+                  <p className="page-header-subtitle">{unreadCount} unread alert{unreadCount !== 1 ? 's' : ''}</p>
+                </div>
+                {unreadCount > 0 && (
+                  <button className="btn btn-ghost" onClick={handleMarkAllRead}>
+                    ✓ Mark All Read
+                  </button>
+                )}
+              </div>
+              <NotificationsView 
+                notifications={notifications}
+                handleMarkRead={handleMarkRead}
+              />
+            </>
+          } />
+
+          {user?.role === 'admin' && (
+            <>
+              <Route path="users" element={
+                <>
+                  <div className="page-header">
+                    <div>
+                      <h1>Manage Users</h1>
+                      <p className="page-header-subtitle">Approve or reject pending dealer accounts</p>
+                    </div>
+                  </div>
+                  <Suspense fallback={<div className="loading-page"><div className="spinner" /></div>}>
+                    <AdminUsersView />
+                  </Suspense>
+                </>
+              } />
+
+              <Route path="settings" element={
+                <>
+                  <div className="page-header">
+                    <div>
+                      <h1>Settings</h1>
+                      <p className="page-header-subtitle">Manage property types, sizes, and sectors</p>
+                    </div>
+                  </div>
+                  <Suspense fallback={<div className="loading-page"><div className="spinner" /></div>}>
+                    <AdminSettingsView />
+                  </Suspense>
+                </>
+              } />
+            </>
+          )}
+
+          <Route path="*" element={<Navigate to="feed" replace />} />
+        </Routes>
 
         {/* Create / Edit Listing Modal */}
         {(showCreateForm || editingListing) && (

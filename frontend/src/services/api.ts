@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SearchParams } from '../types';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -36,17 +37,17 @@ api.interceptors.response.use(
 
 // Auth
 export const authAPI = {
-  register: (data: any) => api.post('/auth/register', data),
-  login: (data: any) => api.post('/auth/login', data),
+  register: (data: Record<string, unknown>) => api.post('/auth/register', data),
+  login: (data: Record<string, unknown>) => api.post('/auth/login', data),
   getMe: () => api.get('/auth/me'),
 };
 
 // Listings
 export const listingsAPI = {
-  create: (data: any) => api.post('/listings/', data),
-  getAll: (params?: any) => api.get('/listings/', { params }),
+  create: (data: Record<string, unknown>) => api.post('/listings/', data),
+  getAll: (params?: SearchParams) => api.get('/listings/', { params }),
   getMy: () => api.get('/listings/my'),
-  update: (id: string, data: any) => api.put(`/listings/${id}`, data),
+  update: (id: string, data: Record<string, unknown>) => api.put(`/listings/${id}`, data),
   delete: (id: string) => api.delete(`/listings/${id}`),
 };
 

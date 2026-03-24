@@ -1,14 +1,6 @@
 import { useState } from 'react';
 import { useMetadata } from '../context/MetadataContext';
-
-interface SearchParams {
-  type?: string;
-  property_type?: string;
-  size?: string;
-  location?: string;
-  budget_min?: string;
-  budget_max?: string;
-}
+import { SearchParams } from '../types';
 
 interface SearchFilterProps {
   onSearch: (params: SearchParams) => void;
@@ -52,10 +44,14 @@ export default function SearchFilter({ onSearch, loading }: SearchFilterProps) {
   };
 
   const handleSearch = () => {
-    const params: SearchParams = {};
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) params[key as keyof SearchParams] = value;
-    });
+    const params: SearchParams = {
+      type: filters.type || undefined,
+      property_type: filters.property_type || undefined,
+      size: filters.size || undefined,
+      location: filters.location || undefined,
+      budget_min: filters.budget_min || undefined,
+      budget_max: filters.budget_max || undefined,
+    };
     onSearch(params);
   };
 

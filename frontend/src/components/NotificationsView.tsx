@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { timeAgo } from './ListingCard';
+import { Notification as AppNotification } from '../types';
 
-export default function NotificationsView({ notifications, handleMarkRead }: { notifications: any[]; handleMarkRead: (id: string) => void }) {
+export default function NotificationsView({ notifications, handleMarkRead }: { notifications: AppNotification[]; handleMarkRead: (id: string) => void }) {
   const navigate = useNavigate();
 
   if (notifications.length === 0) {

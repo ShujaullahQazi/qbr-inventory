@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { MetadataProvider } from './context/MetadataContext';
+import { ToastProvider } from './context/ToastContext';
 
 // Lazy-loaded pages — each becomes its own JS chunk
 const Auth = lazy(() => import('./pages/Auth'));
@@ -59,16 +60,8 @@ function AppContent() {
             : <Navigate to="/auth" replace />
         } />
 
-        {/* Protected dashboard routes — MetadataProvider only loads here */}
-        <Route path="/feed"          element={guardedRoute(<ProtectedRoute />)} />
-        <Route path="/my"            element={guardedRoute(<ProtectedRoute />)} />
-        <Route path="/matches"       element={guardedRoute(<ProtectedRoute />)} />
-        <Route path="/notifications" element={guardedRoute(<ProtectedRoute />)} />
-        <Route path="/users"         element={guardedRoute(<ProtectedRoute />)} />
-        <Route path="/settings"      element={guardedRoute(<ProtectedRoute />)} />
-
-        {/* Catch-all */}
-        <Route path="*" element={<Navigate to={isAuthenticated ? (isVerified ? '/feed' : '/pending') : '/auth'} replace />} />
+        {/* Protected dashboard routes */}
+        <Route path="/*" element={guardedRoute(<ProtectedRoute />)} />
       </Routes>
     </Suspense>
   );
@@ -78,7 +71,9 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppContent />
+        <ToastProvider>
+          <AppContent />
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   );
