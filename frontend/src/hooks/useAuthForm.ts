@@ -65,11 +65,9 @@ export function useAuthForm() {
         // Handle Pydantic validation errors nicely
         const msg = error.response?.data?.detail[0]?.msg;
         setError(`Validation error: ${msg}`);
-        addToast(`Validation error: ${msg}`, 'error');
       } else {
         const msg = typeof error.response?.data?.detail === 'string' ? error.response.data.detail : 'Something went wrong. Please check your connection and try again.';
         setError(msg);
-        addToast(msg, 'error');
       }
     } finally {
       setLoading(false);

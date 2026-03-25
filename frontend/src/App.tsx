@@ -23,11 +23,9 @@ function PageLoader() {
 /** Wraps authenticated + verified routes with MetadataProvider */
 function ProtectedRoute() {
   return (
-    <MetadataProvider>
-      <Suspense fallback={<PageLoader />}>
-        <Dashboard />
-      </Suspense>
-    </MetadataProvider>
+    <Suspense fallback={<PageLoader />}>
+      <Dashboard />
+    </Suspense>
   );
 }
 
@@ -71,9 +69,11 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <ToastProvider>
-          <AppContent />
-        </ToastProvider>
+        <MetadataProvider>
+          <ToastProvider>
+            <AppContent />
+          </ToastProvider>
+        </MetadataProvider>
       </AuthProvider>
     </BrowserRouter>
   );
