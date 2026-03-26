@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException, status, Query, Request
+from fastapi import APIRouter, HTTPException, status, Query, Request, BackgroundTasks
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 from bson import ObjectId
 from database import listings_collection, users_collection
 from models import ListingCreate, ListingUpdate
 from utils.matching import find_matches_for_listing, create_matches_and_notify, remove_stale_matches, MATCH_CRITICAL_FIELDS
+from utils.supabase_sync import sync_listing_to_supabase
 
 router = APIRouter(prefix="/listings", tags=["Listings"])
 
@@ -28,7 +29,7 @@ async def _require_verified(request: Request) -> str:
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_listing(listing: ListingCreate, request: Request) -> Dict[str, Any]:
+async def create_listing(listing: ListingCreate, request: Request, background_tasks: BackgroundTasks) -> Dict[str, Any]:
     user_id = await _require_verified(request)
 
     listing_doc = {
@@ -46,6 +47,7 @@ async def create_listing(listing: ListingCreate, request: Request) -> Dict[str, 
 
     result = await listings_collection.insert_one(listing_doc)
     listing_doc["_id"] = result.inserted_id
+    background_tasks.add_task(sync_listing_to_supabase, listing_doc, "create")
 
     # Trigger matching
     matched = await find_matches_for_listing(listing_doc)
@@ -151,7 +153,7 @@ async def get_my_listings(request: Request) -> Dict[str, Any]:
 
 
 @router.put("/{listing_id}")
-async def update_listing(listing_id: str, update: ListingUpdate, request: Request) -> Dict[str, Any]:
+async def update_listing(listing_id: str, update: ListingUpdate, request: Request, background_tasks: BackgroundTasks) -> Dict[str, Any]:
     user_id = _get_user_id(request)
     if not ObjectId.is_valid(listing_id):
         raise HTTPException(status_code=400, detail="Invalid listing ID")
@@ -173,6 +175,9 @@ async def update_listing(listing_id: str, update: ListingUpdate, request: Reques
     )
 
     await listings_collection.update_one({"_id": ObjectId(listing_id)}, {"$set": update_data})
+
+    update_doc_for_sync = {**update_data, "_id": listing_id}
+    background_tasks.add_task(sync_listing_to_supabase, update_doc_for_sync, "update")
 
     matches_found = 0
     stale_removed = 0
@@ -198,7 +203,7 @@ async def update_listing(listing_id: str, update: ListingUpdate, request: Reques
 
 
 @router.delete("/{listing_id}")
-async def delete_listing(listing_id: str, request: Request) -> Dict[str, str]:
+async def delete_listing(listing_id: str, request: Request, background_tasks: BackgroundTasks) -> Dict[str, str]:
     user_id = _get_user_id(request)
     if not ObjectId.is_valid(listing_id):
         raise HTTPException(status_code=400, detail="Invalid listing ID")
@@ -210,4 +215,5 @@ async def delete_listing(listing_id: str, request: Request) -> Dict[str, str]:
         raise HTTPException(status_code=403, detail="Not authorized")
 
     await listings_collection.delete_one({"_id": ObjectId(listing_id)})
+    background_tasks.add_task(sync_listing_to_supabase, {"_id": listing_id}, "delete")
     return {"message": "Listing deleted successfully"}

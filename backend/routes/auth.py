@@ -1,17 +1,18 @@
-from fastapi import APIRouter, HTTPException, status, Request
+from fastapi import APIRouter, HTTPException, status, Request, BackgroundTasks
 from typing import Dict, Any
 from datetime import datetime, timezone
 from bson import ObjectId
 from database import users_collection
 from models import UserCreate, UserLogin
 from utils.auth import hash_password, verify_password, create_access_token
+from utils.supabase_sync import sync_user_to_supabase
 from config import ADMIN_PHONE
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(user: UserCreate) -> Dict[str, Any]:
+async def register(user: UserCreate, background_tasks: BackgroundTasks) -> Dict[str, Any]:
     existing = await users_collection.find_one({"phone": user.phone})
     if existing:
         raise HTTPException(status_code=409, detail="Phone number already registered")
@@ -32,6 +33,8 @@ async def register(user: UserCreate) -> Dict[str, Any]:
 
     result = await users_collection.insert_one(user_doc)
     user_id = str(result.inserted_id)
+    user_doc["_id"] = result.inserted_id
+    background_tasks.add_task(sync_user_to_supabase, user_doc)
     token = create_access_token({"sub": user_id, "phone": user.phone})
 
     return {

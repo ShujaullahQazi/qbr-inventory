@@ -9,3 +9,5 @@ JWT_SECRET = os.getenv("JWT_SECRET", "your-super-secret-key-change-in-production
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 JWT_EXPIRATION_MINUTES = int(os.getenv("JWT_EXPIRATION_MINUTES", "1440"))
 ADMIN_PHONE = os.getenv("ADMIN_PHONE", "")
+SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")

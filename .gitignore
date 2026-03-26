@@ -38,3 +38,10 @@ npm-debug.log*
 
 # AI / Agent Rules
 .agents/
+
+# Documentation
+PROJECT_KNOWLEDGE_BASE.md
+USER_GUIDELINE.md
+USER_GUIDELINE_Urdu.md
+todo.md
+
