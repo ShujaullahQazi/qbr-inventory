@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useMetadata } from '../context/MetadataContext';
 import { adminAPI } from '../services/api';
+import { HomeIcon, AreaIcon, MapPinIcon, CheckIcon, AlertCircleIcon } from './Icons';
 
 type MetadataKey = 'property_types' | 'property_sizes' | 'sectors';
 
 interface Section {
   key: MetadataKey;
   label: string;
-  icon: string;
   contextKey: 'propertyTypes' | 'propertySizes' | 'sectors';
 }
 
 const SECTIONS: Section[] = [
-  { key: 'property_types', label: 'Property Types', icon: '🏠', contextKey: 'propertyTypes' },
-  { key: 'property_sizes', label: 'Property Sizes', icon: '📐', contextKey: 'propertySizes' },
-  { key: 'sectors',        label: 'Sectors',         icon: '📍', contextKey: 'sectors' },
+  { key: 'property_types', label: 'Property Types', contextKey: 'propertyTypes' },
+  { key: 'property_sizes', label: 'Property Sizes', contextKey: 'propertySizes' },
+  { key: 'sectors',        label: 'Sectors',         contextKey: 'sectors' },
 ];
 
 export default function AdminSettingsView() {
@@ -79,12 +79,22 @@ export default function AdminSettingsView() {
     }
   };
 
+  const renderIcon = (key: MetadataKey) => {
+    switch (key) {
+      case 'property_types': return <HomeIcon size={16} stroke="currentColor" />;
+      case 'property_sizes': return <AreaIcon size={16} stroke="currentColor" />;
+      case 'sectors': return <MapPinIcon size={16} stroke="currentColor" />;
+    }
+  };
+
   return (
     <div className="admin-settings">
-      {SECTIONS.map(({ key, label, icon }) => (
+      {SECTIONS.map(({ key, label }) => (
         <div key={key} className="glass-card admin-settings-section">
           <div className="admin-settings-header">
-            <span>{icon} {label}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              {renderIcon(key)} {label}
+            </span>
             <span className="admin-settings-count">{lists[key].length} items</span>
           </div>
 
@@ -122,14 +132,23 @@ export default function AdminSettingsView() {
       ))}
 
       <div className="admin-settings-footer">
-        {saved && <span className="admin-settings-saved">✓ Saved successfully</span>}
-        {error && <span className="admin-settings-error">⚠ {error}</span>}
+        {saved && (
+          <span className="admin-settings-saved" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <CheckIcon size={14} stroke="currentColor" /> Saved successfully
+          </span>
+        )}
+        {error && (
+          <span className="admin-settings-error" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <AlertCircleIcon size={14} stroke="currentColor" /> {error}
+          </span>
+        )}
         <button
           className="btn btn-primary"
           onClick={handleSave}
           disabled={saving}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
         >
-          {saving ? 'Saving…' : '💾 Save All Changes'}
+          {saving ? 'Saving…' : <><CheckIcon size={16} stroke="currentColor" /> Save All Changes</>}
         </button>
       </div>
     </div>

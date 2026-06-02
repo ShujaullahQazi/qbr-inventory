@@ -2,6 +2,7 @@ import React from 'react';
 import ListingCard from './ListingCard';
 import SkeletonListings from './SkeletonListings';
 import { Listing, PaginatedResponse } from '../types';
+import { SearchOffIcon } from './Icons';
 
 export default function ListingsFeedView({ 
   loading, 
@@ -14,7 +15,9 @@ export default function ListingsFeedView({
   if (listings.length === 0) {
     return (
       <div className="empty-state">
-        <div className="empty-state-icon">📭</div>
+        <div className="empty-state-icon">
+          <SearchOffIcon size={48} stroke="var(--text-muted)" />
+        </div>
         <h3>No Listings Found</h3>
         <p>No listings match your filters. Try adjusting your search or post a new listing to get started.</p>
       </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { timeAgo } from './ListingCard';
 import { Notification as AppNotification } from '../types';
+import { BellOffIcon, TargetIcon } from './Icons';
 
 export default function NotificationsView({ notifications, handleMarkRead }: { notifications: AppNotification[]; handleMarkRead: (id: string) => void }) {
   const navigate = useNavigate();
@@ -9,7 +10,9 @@ export default function NotificationsView({ notifications, handleMarkRead }: { n
   if (notifications.length === 0) {
     return (
       <div className="empty-state">
-        <div className="empty-state-icon">🔕</div>
+        <div className="empty-state-icon">
+          <BellOffIcon size={48} stroke="var(--text-muted)" />
+        </div>
         <h3>No Notifications</h3>
         <p>You'll receive alerts here when your listings match with other dealers.</p>
       </div>
@@ -28,7 +31,9 @@ export default function NotificationsView({ notifications, handleMarkRead }: { n
           }}
           style={{ cursor: 'pointer' }}
         >
-          <div className="notification-icon">🎯</div>
+          <div className="notification-icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+            <TargetIcon size={14} stroke="currentColor" />
+          </div>
           <div className="notification-content">
             <div className="notification-message">{n.message}</div>
             <div className="notification-time">{timeAgo(n.created_at)}</div>

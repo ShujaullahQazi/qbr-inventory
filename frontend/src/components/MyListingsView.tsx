@@ -1,12 +1,15 @@
 import React from 'react';
 import ListingCard from './ListingCard';
 import { Listing } from '../types';
+import { FileTextIcon } from './Icons';
 
 export default function MyListingsView({ myListings, setShowCreateForm, handleDeleteListing, onEdit }: { myListings: Listing[]; setShowCreateForm: (show: boolean) => void; handleDeleteListing: (id: string) => void; onEdit: (listing: Listing) => void }) {
   if (myListings.length === 0) {
     return (
       <div className="empty-state">
-        <div className="empty-state-icon">📝</div>
+        <div className="empty-state-icon">
+          <FileTextIcon size={48} stroke="var(--text-muted)" />
+        </div>
         <h3>No Listings Yet</h3>
         <p>Post your first "Need" or "Available" listing to start matching with other dealers.</p>
         <button className="btn btn-primary" onClick={() => setShowCreateForm(true)} style={{ marginTop: '1rem' }}>

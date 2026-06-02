@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMetadata } from '../context/MetadataContext';
 import { SearchParams } from '../types';
+import { SearchIcon, RefreshIcon } from './Icons';
 
 interface SearchFilterProps {
   onSearch: (params: SearchParams) => void;
@@ -145,10 +146,10 @@ export default function SearchFilter({ onSearch, loading }: SearchFilterProps) {
       {/* Actions */}
       <div className="search-bar-actions">
         <button className="btn btn-primary btn-sm" onClick={handleSearch} disabled={loading}>
-          🔍 Search
+          <SearchIcon size={12} style={{ marginRight: '4px' }} /> Search
         </button>
         <button className="btn btn-ghost btn-sm" onClick={handleReset}>
-          ↻ Reset
+          <RefreshIcon size={12} style={{ marginRight: '4px' }} /> Reset
         </button>
       </div>
     </div>

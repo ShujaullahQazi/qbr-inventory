@@ -1,6 +1,7 @@
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import { useAuthForm } from '../hooks/useAuthForm';
+import { HomeIcon } from '../components/Icons';
 
 export default function Auth() {
   const {
@@ -18,9 +19,11 @@ export default function Auth() {
     <div className="auth-page">
       <div className="auth-container">
         <div className="auth-brand">
-          <div className="auth-brand-icon">🏘️</div>
+          <div className="auth-brand-icon" style={{ background: 'transparent', border: '1px solid var(--border-medium)', boxShadow: 'none' }}>
+            <HomeIcon size={28} stroke="var(--primary-light)" />
+          </div>
           <h1>QBR Inventory</h1>
-          <p>Property Dealer Network — Islamabad</p>
+          <p>Realtors Network</p>
         </div>
 
         <div className="auth-card">
@@ -42,24 +45,24 @@ export default function Auth() {
           {error && <div className="auth-error">{error}</div>}
 
           {mode === 'login' ? (
-            <LoginForm 
-              form={form} 
-              handleChange={handleChange} 
-              handleSubmit={handleSubmit} 
-              loading={loading} 
+            <LoginForm
+              form={form}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              loading={loading}
             />
           ) : (
-            <RegisterForm 
-              form={form} 
-              handleChange={handleChange} 
-              handleSubmit={handleSubmit} 
-              loading={loading} 
+            <RegisterForm
+              form={form}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              loading={loading}
             />
           )}
         </div>
 
         <p className="auth-footer">
-          Connecting Islamabad's property dealers — one match at a time.
+          Connecting Realtors — one match at a time.
         </p>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Listing } from '../types';
+import { MapPinIcon, AreaIcon, CoinIcon, EditIcon, TrashIcon, CheckIcon, SearchIcon } from './Icons';
 
 function formatBudget(val: number | null | undefined) {
   if (!val) return '—';
@@ -25,7 +26,15 @@ export default function ListingCard({ listing, isMyListing, onDelete, onEdit }: 
       <div className="listing-header">
         <div className="listing-tags">
           <span className={`tag ${listing.type === 'need' ? 'tag-need' : 'tag-available'}`}>
-            {listing.type === 'need' ? '🔍 NEED' : '✅ AVAILABLE'}
+            {listing.type === 'need' ? (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <SearchIcon size={12} stroke="currentColor" /> NEED
+              </span>
+            ) : (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <CheckIcon size={12} stroke="currentColor" /> AVAILABLE
+              </span>
+            )}
           </span>
           <span className="tag tag-property">{listing.property_type}</span>
         </div>
@@ -38,14 +47,14 @@ export default function ListingCard({ listing, isMyListing, onDelete, onEdit }: 
 
       <div className="listing-details">
         <div className="listing-detail">
-          <span className="icon">📍</span> {listing.location}
+          <span className="icon" style={{ display: 'inline-flex', alignItems: 'center' }}><MapPinIcon size={14} /></span> {listing.location}
         </div>
         <div className="listing-detail">
-          <span className="icon">📐</span> {listing.size}
+          <span className="icon" style={{ display: 'inline-flex', alignItems: 'center' }}><AreaIcon size={14} /></span> {listing.size}
         </div>
         {listing.budget && (
           <div className="listing-detail">
-            <span className="icon">💰</span> {formatBudget(listing.budget)}
+            <span className="icon" style={{ display: 'inline-flex', alignItems: 'center' }}><CoinIcon size={14} /></span> {formatBudget(listing.budget)}
           </div>
         )}
       </div>
@@ -62,16 +71,16 @@ export default function ListingCard({ listing, isMyListing, onDelete, onEdit }: 
             </span>
             <div className="listing-actions">
               <button className="btn btn-ghost btn-sm" onClick={() => onEdit?.(listing)}>
-                ✏️ Edit
+                <EditIcon size={12} style={{ marginRight: '4px' }} /> Edit
               </button>
               <button className="btn btn-danger btn-sm" onClick={() => onDelete?.(listing._id)}>
-                🗑 Delete
+                <TrashIcon size={12} style={{ marginRight: '4px' }} /> Delete
               </button>
             </div>
           </>
         ) : (
           <div className="listing-dealer">
-            <div className="listing-dealer-avatar">
+            <div className="listing-dealer-avatar" style={{ background: 'transparent', border: '1px solid var(--border-medium)', boxShadow: 'none' }}>
               {listing.dealer_name?.charAt(0)?.toUpperCase() || '?'}
             </div>
             <div>

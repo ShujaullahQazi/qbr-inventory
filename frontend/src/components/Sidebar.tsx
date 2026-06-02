@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { User } from '../types';
+import { HomeIcon, ListIcon, PinIcon, TargetIcon, BellIcon, UsersIcon, SettingsIcon } from './Icons';
 
 export default function Sidebar({ myListingsCount, matchesCount, unreadCount, user, logout }: { myListingsCount: number; matchesCount: number; unreadCount: number; user: User | null; logout: () => void }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -19,7 +20,9 @@ export default function Sidebar({ myListingsCount, matchesCount, unreadCount, us
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <div className="sidebar-brand-icon">🏘️</div>
+        <div className="sidebar-brand-icon" style={{ background: 'transparent', border: '1px solid var(--border-medium)', boxShadow: 'none' }}>
+          <HomeIcon size={20} stroke="var(--primary-light)" />
+        </div>
         <div>
           <h2>QBR Inventory</h2>
           <span>Dealer Network</span>
@@ -28,27 +31,27 @@ export default function Sidebar({ myListingsCount, matchesCount, unreadCount, us
 
       <nav className="sidebar-nav">
         <NavLink to="/feed"          className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-          <span className="nav-icon">📋</span> All Listings
+          <span className="nav-icon"><ListIcon size={18} /></span> All Listings
         </NavLink>
         <NavLink to="/my"            className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-          <span className="nav-icon">📌</span> My Posts
+          <span className="nav-icon"><PinIcon size={18} /></span> My Posts
           {myListingsCount > 0 && <span className="nav-badge" style={{ background: 'var(--info)' }}>{myListingsCount}</span>}
         </NavLink>
         <NavLink to="/matches"       className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-          <span className="nav-icon">🎯</span> Matches
+          <span className="nav-icon"><TargetIcon size={18} /></span> Matches
           {matchesCount > 0 && <span className="nav-badge" style={{ background: 'var(--success)' }}>{matchesCount}</span>}
         </NavLink>
         <NavLink to="/notifications" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-          <span className="nav-icon">🔔</span> Notifications
+          <span className="nav-icon"><BellIcon size={18} /></span> Notifications
           {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
         </NavLink>
         {user?.role === 'admin' && (
           <>
             <NavLink to="/users" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-              <span className="nav-icon">👥</span> Users
+              <span className="nav-icon"><UsersIcon size={18} /></span> Users
             </NavLink>
             <NavLink to="/settings" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-              <span className="nav-icon">⚙️</span> Settings
+              <span className="nav-icon"><SettingsIcon size={18} /></span> Settings
             </NavLink>
           </>
         )}

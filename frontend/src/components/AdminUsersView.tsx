@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { adminAPI } from '../services/api';
+import { CheckIcon } from './Icons';
 
 interface PendingUser {
   _id: string;
@@ -62,7 +63,9 @@ export default function AdminUsersView() {
   if (users.length === 0) {
     return (
       <div className="empty-state">
-        <div className="empty-state-icon">✅</div>
+        <div className="empty-state-icon">
+          <CheckIcon size={48} stroke="var(--accent)" />
+        </div>
         <h3>No Pending Users</h3>
         <p>All users have been reviewed.</p>
       </div>

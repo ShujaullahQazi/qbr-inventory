@@ -1,4 +1,5 @@
 import { useAuth } from '../context/AuthContext';
+import { HourglassIcon } from '../components/Icons';
 
 export default function PendingApproval() {
   const { user, logout } = useAuth();
@@ -7,7 +8,9 @@ export default function PendingApproval() {
     <div className="auth-page">
       <div className="auth-container">
         <div className="auth-brand">
-          <div className="auth-brand-icon">⏳</div>
+          <div className="auth-brand-icon" style={{ background: 'transparent', border: '1px solid var(--border-medium)', boxShadow: 'none' }}>
+            <HourglassIcon size={28} stroke="var(--primary-light)" />
+          </div>
           <h1>Account Under Review</h1>
           <p>Hi {user?.name || 'there'}, your account has been created successfully.</p>
         </div>

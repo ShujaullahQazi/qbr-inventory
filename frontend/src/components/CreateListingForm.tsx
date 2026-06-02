@@ -1,6 +1,7 @@
 import { useMetadata } from '../context/MetadataContext';
 import { Listing, ListingSubmissionResponse } from '../types';
 import { useCreateListing } from '../hooks/useCreateListing';
+import { EditIcon, ListIcon, CloseIcon, SearchIcon, CheckIcon } from './Icons';
 
 interface CreateListingFormProps {
   onClose?: () => void;
@@ -27,8 +28,16 @@ export default function CreateListingForm({ onClose, onCreated, editListing }: C
     <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose?.()}>
       <div className="modal">
         <div className="modal-header">
-          <h2>{isEditMode ? '✏️ Edit Listing' : '📋 Post New Listing'}</h2>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <h2 style={{ display: 'inline-flex', alignItems: 'center' }}>
+            {isEditMode ? (
+              <><EditIcon size={18} style={{ marginRight: '8px' }} /> Edit Listing</>
+            ) : (
+              <><ListIcon size={18} style={{ marginRight: '8px' }} /> Post New Listing</>
+            )}
+          </h2>
+          <button className="modal-close" onClick={onClose} style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <CloseIcon size={18} />
+          </button>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -42,15 +51,17 @@ export default function CreateListingForm({ onClose, onCreated, editListing }: C
                 type="button"
                 className={form.type === 'need' ? 'active' : ''}
                 onClick={() => setForm({ ...form, type: 'need' })}
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                🔍 I Need
+                <SearchIcon size={14} stroke="currentColor" /> I Need
               </button>
               <button
                 type="button"
                 className={form.type === 'available' ? 'active' : ''}
                 onClick={() => setForm({ ...form, type: 'available' })}
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                ✅ I Have
+                <CheckIcon size={14} stroke="currentColor" /> I Have
               </button>
             </div>
           </div>
@@ -153,13 +164,17 @@ export default function CreateListingForm({ onClose, onCreated, editListing }: C
             type="submit"
             className="btn btn-primary btn-block btn-lg"
             disabled={loading}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
           >
-            {loading
-              ? (isEditMode ? 'Saving...' : 'Posting...')
-              : isEditMode
-                ? '💾 Save Changes'
-                : form.type === 'need' ? '🔍 Post Need' : '✅ Post Available'
-            }
+            {loading ? (
+              isEditMode ? 'Saving...' : 'Posting...'
+            ) : isEditMode ? (
+              <><CheckIcon size={16} stroke="currentColor" /> Save Changes</>
+            ) : form.type === 'need' ? (
+              <><SearchIcon size={16} stroke="currentColor" /> Post Need</>
+            ) : (
+              <><CheckIcon size={16} stroke="currentColor" /> Post Available</>
+            )}
           </button>
         </form>
       </div>
