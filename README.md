@@ -1,6 +1,6 @@
 <div align="center">
-  <h1>🏘️ QBR Inventory — Dealer Network</h1>
-  <p><strong>A B2B Lead-Sharing Platform for Property Dealers in Islamabad's Developing Sectors</strong></p>
+  <h1>🏘️ QBR Inventory — Realtor Network</h1>
+  <p><strong>A B2B Lead-Sharing Platform for Realtors</strong></p>
 
   <!-- Badges -->
   <p>
@@ -124,5 +124,5 @@ qbr-inventory/
 ---
 
 <div align="center">
-  <p>Built for the modern property dealer.</p>
+  <p>Built for the modern Realtor</p>
 </div>
