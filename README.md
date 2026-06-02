@@ -124,5 +124,5 @@ qbr-inventory/
 ---
 
 <div align="center">
-  <p>Built for the modern property dealer.</p>
+  <p>Built for the modern Realtor</p>
 </div>
