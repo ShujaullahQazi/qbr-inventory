@@ -9,15 +9,37 @@ function formatBudget(val: number | null | undefined) {
   return `PKR ${val.toLocaleString()}`;
 }
 
-export function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
+export function timeAgo(dateStr: string): string {
+  if (!dateStr) return '—';
+  
+  try {
+    // Normalize format (replace space with T for ISO format)
+    let normalized = dateStr.trim().replace(' ', 'T');
+    
+    // If it doesn't contain a timezone offset or Z, treat it as UTC by appending 'Z'
+    const hasTimezone = normalized.includes('Z') || /[+-]\d{2}:?\d{2}$/.test(normalized);
+    if (!hasTimezone) {
+      normalized += 'Z';
+    }
+    
+    const parsedDate = new Date(normalized);
+    if (isNaN(parsedDate.getTime())) {
+      return '—';
+    }
+
+    const diff = Date.now() - parsedDate.getTime();
+    const mins = Math.floor(diff / 60000);
+    
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days}d ago`;
+  } catch (error) {
+    console.error('Error calculating relative time:', error);
+    return '—';
+  }
 }
 
 export default function ListingCard({ listing, isMyListing, onDelete, onEdit }: { listing: Listing; isMyListing: boolean; onDelete?: (id: string) => void; onEdit?: (listing: Listing) => void }) {
