@@ -2,6 +2,7 @@ import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import { useAuthForm } from '../hooks/useAuthForm';
 import { HomeIcon } from '../components/Icons';
+import DeveloperFootnote from '../components/DeveloperFootnote';
 
 export default function Auth() {
   const {
@@ -65,6 +66,7 @@ export default function Auth() {
           Connecting Realtors — one match at a time.
         </p>
       </div>
+      <DeveloperFootnote absolute />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { User } from '../types';
 import { HomeIcon, ListIcon, PinIcon, TargetIcon, BellIcon, UsersIcon, SettingsIcon } from './Icons';
+import DeveloperFootnote from './DeveloperFootnote';
 
 export default function Sidebar({ myListingsCount, matchesCount, unreadCount, user, logout }: { myListingsCount: number; matchesCount: number; unreadCount: number; user: User | null; logout: () => void }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -87,6 +88,7 @@ export default function Sidebar({ myListingsCount, matchesCount, unreadCount, us
           </div>
         )}
       </div>
+      <DeveloperFootnote />
     </aside>
   );
 }

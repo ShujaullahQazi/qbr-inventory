@@ -1,5 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 import { HourglassIcon } from '../components/Icons';
+import DeveloperFootnote from '../components/DeveloperFootnote';
 
 export default function PendingApproval() {
   const { user, logout } = useAuth();
@@ -29,6 +30,7 @@ export default function PendingApproval() {
           Connecting Islamabad's property dealers — one match at a time.
         </p>
       </div>
+      <DeveloperFootnote absolute />
     </div>
   );
 }
