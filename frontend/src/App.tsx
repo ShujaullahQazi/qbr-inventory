@@ -1,9 +1,19 @@
 import './index.css';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, createContext, useContext } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { MetadataProvider } from './context/MetadataContext';
 import { ToastProvider } from './context/ToastContext';
+import { useTheme, Theme } from './hooks/useTheme';
+
+// ── Theme context ──────────────────────────────────────────────────────────────
+interface ThemeCtx {
+  theme: Theme;
+  toggleTheme: () => void;
+}
+
+export const ThemeContext = createContext<ThemeCtx>({ theme: 'dark', toggleTheme: () => {} });
+export const useThemeContext = () => useContext(ThemeContext);
 
 // Lazy-loaded pages — each becomes its own JS chunk
 const Auth = lazy(() => import('./pages/Auth'));
@@ -66,16 +76,20 @@ function AppContent() {
 }
 
 function App() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <MetadataProvider>
-          <ToastProvider>
-            <AppContent />
-          </ToastProvider>
-        </MetadataProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <BrowserRouter>
+        <AuthProvider>
+          <MetadataProvider>
+            <ToastProvider>
+              <AppContent />
+            </ToastProvider>
+          </MetadataProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeContext.Provider>
   );
 }
 

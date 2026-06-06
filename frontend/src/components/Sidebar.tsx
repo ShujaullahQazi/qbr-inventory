@@ -3,6 +3,8 @@ import { NavLink } from 'react-router-dom';
 import { User } from '../types';
 import { HomeIcon, ListIcon, PinIcon, TargetIcon, BellIcon, UsersIcon, SettingsIcon } from './Icons';
 import DeveloperFootnote from './DeveloperFootnote';
+import ThemeToggle from './ThemeToggle';
+import { useThemeContext } from '../App';
 
 export default function Sidebar({ myListingsCount, matchesCount, unreadCount, user, logout }: { myListingsCount: number; matchesCount: number; unreadCount: number; user: User | null; logout: () => void }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -58,6 +60,11 @@ export default function Sidebar({ myListingsCount, matchesCount, unreadCount, us
         )}
       </nav>
 
+      <ThemeToggleRow />
+
+      {/* Compact icon visible only in mobile top bar */}
+      <MobileThemeToggle />
+
       <div className="sidebar-user" ref={dropdownRef} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
         <div className="sidebar-user-avatar">
           {user?.name?.charAt(0)?.toUpperCase() || '?'}
@@ -90,5 +97,25 @@ export default function Sidebar({ myListingsCount, matchesCount, unreadCount, us
       </div>
       <DeveloperFootnote />
     </aside>
+  );
+}
+
+/** Reads theme from context so the hook call stays inside a component tree */
+function ThemeToggleRow() {
+  const { theme, toggleTheme } = useThemeContext();
+  return (
+    <div className="sidebar-theme-toggle">
+      <ThemeToggle theme={theme} onToggle={toggleTheme} />
+    </div>
+  );
+}
+
+/** Compact icon-only toggle shown in the mobile top bar */
+function MobileThemeToggle() {
+  const { theme, toggleTheme } = useThemeContext();
+  return (
+    <div className="mobile-theme-toggle">
+      <ThemeToggle theme={theme} onToggle={toggleTheme} compact />
+    </div>
   );
 }
