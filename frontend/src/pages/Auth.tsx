@@ -66,7 +66,11 @@ export default function Auth() {
           Connecting Realtors — one match at a time.
         </p>
       </div>
-      <DeveloperFootnote absolute />
+
+      {/* Sticky-bottom footnote — outside auth-container so it always sits at the page bottom */}
+      <div className="auth-footnote">
+        <DeveloperFootnote />
+      </div>
     </div>
   );
 }
